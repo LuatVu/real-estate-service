@@ -57,19 +57,19 @@ public class Posts {
     private LegalType legal;
 
     @Column(name = "price", precision = 15, scale = 2)
-    private BigDecimal price;
+    private BigDecimal price;    
+
+    @Column(name = "province_code", length = 20)
+    private String provinceCode;
+
+    @Column(name = "district_code", length = 20)
+    private String districtCode;
+
+    @Column(name = "ward_code", length = 20)
+    private String wardCode;
 
     @Column(name = "address", columnDefinition = "text")
     private String address;
-
-    @Column(name = "city", length = 100)
-    private String city;
-
-    @Column(name = "state", length = 100)
-    private String state;
-
-    @Column(name = "postal_code", length = 20)
-    private String postalCode;
 
     @Column(name = "created_date")
     private LocalDateTime createdDate;

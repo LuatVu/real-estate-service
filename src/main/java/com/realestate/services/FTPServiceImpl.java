@@ -3,7 +3,8 @@ package com.realestate.services;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
-import org.apache.commons.net.ftp.FTPSClient;
+
+import org.apache.commons.net.ftp.FTPClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class FTPServiceImpl implements FTPService{
     @Autowired
-    private FTPSClient ftpClient;
+    private FTPClient ftpClient;
 
     @Value("${ftp.base-directory}")
     private String baseDirectory;

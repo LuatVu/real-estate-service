@@ -2,8 +2,7 @@ package com.realestate.dto;
 
 
 
-import java.util.Set;
-
+import java.io.Serializable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -14,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SignUpRequestDto {
+public class SignUpRequestDto implements Serializable{
     @NotBlank(message = "Username is required!")
     @Size(min= 3, message = "Username must have atleast 3 characters!")
     @Size(max= 20, message = "Username can have have atmost 20 characters!")

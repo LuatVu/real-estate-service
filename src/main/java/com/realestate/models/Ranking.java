@@ -1,7 +1,15 @@
 package com.realestate.models;
 
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,14 +26,18 @@ import jakarta.persistence.Table;
 @Data
 @Entity
 @Table(name = "ranking")
-public class Ranking {
+@Builder
+@Getter
+@Setter
+public class Ranking implements Serializable{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ranking_id")
-    private Long rankingId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "ranking_id")    
+    private String rankingId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
+    @JsonIgnore
     private Posts post;
 
     @Enumerated(EnumType.STRING)

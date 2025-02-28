@@ -1,6 +1,9 @@
 package com.realestate.models;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,20 +15,22 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Data;
-
 
 @Data
 @Entity
 @Table(name = "images")
-public class Images {
-     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Builder
+public class Images implements Serializable{
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "image_id")
-    private Long imageId;
+    private String imageId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
+    @JsonIgnore
     private Posts post;
 
     @Column(name = "file_path", nullable = false)

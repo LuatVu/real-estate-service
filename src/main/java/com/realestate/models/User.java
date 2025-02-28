@@ -6,14 +6,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import java.math.BigDecimal;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
+
 import java.util.Set;
+
 
 @Data
 @Entity
@@ -26,12 +30,13 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+@Setter
+public class User implements Serializable{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "user_id")    
+    private String userId;
 
     @Column(name = "username", length = 50, unique = true)
     private String username;
@@ -64,6 +69,7 @@ public class User {
 
     // Many-to-Many relationship with Role
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })    
+    @JsonIgnore
     @JoinTable(
             name = "user_roles", // Name of the join table
             joinColumns = @JoinColumn(name = "user_id"), // Foreign key for User
@@ -73,6 +79,7 @@ public class User {
 
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+    @JsonIgnore
     @JoinTable(
         name="user_packages",
         joinColumns = @JoinColumn(name="user_id"),

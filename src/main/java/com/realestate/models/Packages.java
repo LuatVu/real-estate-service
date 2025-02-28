@@ -1,7 +1,9 @@
 package com.realestate.models;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,11 +18,11 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "packages")
-public class Packages {
+public class Packages implements Serializable{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "package_id")
-    private Long packageId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "package_id")    
+    private String packageId;
 
     @Column(name = "package_name", nullable = false, length = 100)
     private String packageName;

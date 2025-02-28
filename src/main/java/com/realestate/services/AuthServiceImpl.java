@@ -69,7 +69,7 @@ public class AuthServiceImpl implements AuthService{
 
     private User createUser(SignUpRequestDto signUpRequestDto) throws RoleNotFoundException {
         Set<Role> roles = new HashSet<Role>();
-        roles.add(roleFactory.getInstance("subscriber"));
+        roles.add(roleFactory.getInstance("SUBSCRIBER"));
 
         return User.builder()
                 .email(signUpRequestDto.getEmail())

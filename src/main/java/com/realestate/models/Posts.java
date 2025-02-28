@@ -1,8 +1,17 @@
 package com.realestate.models;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -23,14 +32,20 @@ import jakarta.persistence.Table;
 @Data
 @Entity
 @Table(name = "posts")
-public class Posts {
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+@Setter
+public class Posts implements Serializable{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "post_id")
-    private Long postId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "post_id")    
+    private String postId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
     @Column(name = "title", nullable = false)
@@ -106,9 +121,9 @@ public class Posts {
     }
 
     public enum FurnitureType {
-        DAY_DU("DAY DU"),
-        CO_BAN("CO BAN"),
-        KHONG_NOI_THAT("KHONG NOI THAT");
+        DAY_DU("DAY_DU"),
+        CO_BAN("CO_BAN"),
+        KHONG_NOI_THAT("KHONG_NOI_THAT");
 
         private final String value;
 
@@ -122,9 +137,9 @@ public class Posts {
     }
 
     public enum LegalType {
-        SO_DO("SO DO"),
-        HOP_DONG_MUA_BAN("HOP DONG MUA BAN"),
-        KHONG_SO("KHONG SO");
+        SO_DO("SO_DO"),
+        HOP_DONG_MUA_BAN("HOP_DONG_MUA_BAN"),
+        KHONG_SO("KHONG_SO");
 
         private final String value;
 

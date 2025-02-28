@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.realestate.dto.ApiResponseDto;
+import com.realestate.exception.BusinessLogicException;
 import com.realestate.exception.RoleNotFoundException;
 import com.realestate.exception.UserAlreadyExistsException;
 
@@ -56,5 +57,15 @@ public class GlobalExceptionHandler {
                                 .message(exception.getMessage())
                                 .build()
                 );
+    }
+
+    @ExceptionHandler(BusinessLogicException.class)
+    public ResponseEntity<String> handleBusinessException(BusinessLogicException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<String> handleGeneralException(Exception ex) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ex.getMessage());
     }
 }

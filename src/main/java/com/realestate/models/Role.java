@@ -1,6 +1,5 @@
 package com.realestate.models;
-import java.util.HashSet;
-
+import java.io.Serializable;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.util.Set;
@@ -8,12 +7,12 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name = "roles")
-public class Role {
+public class Role implements Serializable{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "role_id")
-    private Integer roleId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "role_id")    
+    private String roleId;
 
     @Column(name = "role_name", nullable = false, length = 50)
     private String roleName;

@@ -5,20 +5,24 @@ import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
 @Table(name = "user_balances")
-public class UserBalance {
+public class UserBalance implements Serializable{
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "balance_id")
-    private Long balanceId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "balance_id")    
+    private String balanceId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "user_balances_ibfk_1"))
+    @JsonIgnore
     private User user; // Quan hệ nhiều-một với bảng users
 
     @Column(name = "main_balance", precision = 15, scale = 2, columnDefinition = "DECIMAL(15,2) DEFAULT 0.00")

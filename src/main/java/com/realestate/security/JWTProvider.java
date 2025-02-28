@@ -33,7 +33,8 @@ public class JWTProvider {
         UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
 
         return Jwts.builder()
-                .setSubject((userPrincipal.getEmail()))
+                .setSubject(userPrincipal.getEmail())
+                .setId(userPrincipal.getId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))                
                 .signWith(key(), SignatureAlgorithm.HS256)
@@ -47,6 +48,11 @@ public class JWTProvider {
     public String getUserNameFromJwtToken(String token) {
         return Jwts.parserBuilder().setSigningKey(key()).build()
                 .parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public String getUserIdFromJwtToken(String token){
+        return Jwts.parserBuilder().setSigningKey(key()).build()
+                .parseClaimsJws(token).getBody().getId();
     }
 
     public boolean validateJwtToken(String authToken) {

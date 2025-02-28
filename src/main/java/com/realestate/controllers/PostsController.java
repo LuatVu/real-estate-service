@@ -7,11 +7,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.realestate.dao.UserDetailsImpl;
 import com.realestate.dto.ApiResponseDto;
 import com.realestate.dto.ImagesDto;
 import com.realestate.dto.PostDto;
@@ -49,8 +52,10 @@ public class PostsController {
                 imageList.get(0).setIsPrimary(true);
             }
             data.setImages(imageList);
-            // for test
-            data.setUserId("cbe24f08-1a66-4fce-9d33-9379316e0e4e");
+            
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
+            data.setUserId(userPrincipal.getId());
 
             Posts postJPA = postService.createPost(data);
     

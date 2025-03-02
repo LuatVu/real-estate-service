@@ -3,6 +3,9 @@ package com.realestate.dto;
 
 
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -13,6 +16,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SignUpRequestDto implements Serializable{
     @NotBlank(message = "Username is required!")
     @Size(min= 3, message = "Username must have atleast 3 characters!")

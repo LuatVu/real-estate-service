@@ -2,11 +2,13 @@ package com.realestate.dto;
 
 import java.io.Serializable;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class SignInResponseDto implements Serializable{
     private String token;    
     private String type = "Bearer";

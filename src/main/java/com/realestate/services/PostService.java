@@ -5,4 +5,5 @@ import com.realestate.models.Posts;
 
 public interface PostService {
     Posts createPost(PostDto post) throws Exception;
+    PostDto getPost(String postId) throws Exception;
 }

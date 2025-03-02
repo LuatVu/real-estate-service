@@ -3,6 +3,7 @@ package com.realestate.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -78,5 +79,40 @@ public class PostServiceImpl implements PostService{
                             .build();
         rankingRepository.save(rankJPA);        
         return savedPost;        
+    }
+
+    public PostDto getPost(String postId) throws Exception{
+
+        Optional<Posts> postJPA = postRepository.findById(postId);
+        if(postJPA.isPresent()){
+            Posts model = postJPA.get();
+            List<Images> images = model.getImages();
+            List<ImagesDto> imagesDtos = new ArrayList<>();
+
+            images.forEach(img -> {
+                ImagesDto imgDTO = ImagesDto.builder()
+                                    .imageId(img.getImageId())
+                                    .postId(postId)
+                                    .filePath(img.getFilePath())
+                                    .fileName(img.getFileName())
+                                    .isPrimary(img.getIsPrimary())
+                                    .build();
+                imagesDtos.add(imgDTO);
+            });
+
+            PostDto postDTO = PostDto.builder()
+                                .postId(postId)
+                                .userId(model.getUser().getUserId())                                
+                                .title(model.getTitle())
+                                .description(model.getDescription())                                
+                                .acreage(model.getAcreage())
+                                .price(model.getPrice())
+                                .images(imagesDtos)
+                                .build();
+            return postDTO;
+        }else{
+            return null;
+        }
+        
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,7 @@ import com.realestate.models.Posts;
 import com.realestate.services.FTPService;
 import com.realestate.services.PostService;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
@@ -39,7 +41,7 @@ public class PostsController {
     private String baseDirectory;
 
     @PostMapping("/upload")
-    public ResponseEntity<ApiResponseDto<?>> uploadPosts(@RequestPart("files") MultipartFile[] files, @RequestPart("data") PostDto data) throws Exception {        
+    public ResponseEntity<ApiResponseDto<?>> uploadPosts(@RequestPart("files") MultipartFile[] files, @RequestPart("data") PostDto data) throws Exception {
         try{
             List<ImagesDto> imageList = new ArrayList<ImagesDto>();
             for (MultipartFile file : files) {
@@ -67,8 +69,15 @@ public class PostsController {
         }catch(Exception e){
             ApiResponseDto<?> response = new ApiResponseDto<>("500", "Internal Server Error: " + e.getMessage(), null);
             return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-                
+        }                
     }
-    
+
+    @GetMapping("/get-post")
+    public ResponseEntity<ApiResponseDto<?>> getPost(@RequestParam("postId") String postId) throws Exception{
+        PostDto postDto = postService.getPost(postId);        
+        return ResponseEntity.ok(ApiResponseDto.builder()
+                                    .status(String.valueOf(HttpStatus.OK))
+                                    .response(postDto)
+                                    .build());        
+    }    
 }

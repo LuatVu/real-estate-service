@@ -106,6 +106,10 @@ public class Posts implements Serializable{
     @Column(name = "direction")
     private Direction direction;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name="type")
+    private Type type;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Images> images;
 
@@ -118,6 +122,12 @@ public class Posts implements Serializable{
     @PreUpdate
     protected void onUpdate() {
         updatedDate = LocalDateTime.now();
+    }
+
+    public enum Type {
+        CHCC, NHA_RIENG, BIET_THU,
+        NHA_PHO, DAT_NEN, CONDOTEL, KHO_NHA_XUONG,
+        BDS_KHAC
     }
 
     public enum FurnitureType {
@@ -133,7 +143,7 @@ public class Posts implements Serializable{
 
         public String getValue() {
             return value;
-        }
+        }        
     }
 
     public enum LegalType {
@@ -168,5 +178,22 @@ public class Posts implements Serializable{
         TAY_BAC,
         DONG_NAM,
         TAY_NAM
+    }
+
+    public enum PriorityLevel {
+        DIAMOND(4),   // Highest priority
+        GOLD(3),
+        SILVER(2),
+        NORMAL(1);    // Lowest priority
+    
+        private final int priority;
+    
+        PriorityLevel(int priority) {
+            this.priority = priority;
+        }
+    
+        public int getPriority() {
+            return priority;
+        }
     }
 }

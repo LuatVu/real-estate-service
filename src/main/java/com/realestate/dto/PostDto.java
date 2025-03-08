@@ -34,6 +34,7 @@ public class PostDto implements Serializable{
     private String status;
     private Integer floors;
     private String direction;
+    private String type;
     private List<ImagesDto> images;
     private RankingDto rankingDto;
     

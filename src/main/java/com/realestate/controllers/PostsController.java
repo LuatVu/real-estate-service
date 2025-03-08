@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -19,12 +20,16 @@ import com.realestate.dao.UserDetailsImpl;
 import com.realestate.dto.ApiResponseDto;
 import com.realestate.dto.ImagesDto;
 import com.realestate.dto.PostDto;
+import com.realestate.dto.PostSearchRequest;
 import com.realestate.models.Posts;
+import com.realestate.models.PostsDocument;
+import com.realestate.services.ElasticSearchService;
 import com.realestate.services.FTPService;
 import com.realestate.services.PostService;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -33,6 +38,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class PostsController {
     @Autowired
     private PostService postService;
+
+    @Autowired
+    private ElasticSearchService elasticSearchService;
 
     @Autowired
     private FTPService ftpService;
@@ -79,5 +87,15 @@ public class PostsController {
                                     .status(String.valueOf(HttpStatus.OK))
                                     .response(postDto)
                                     .build());        
-    }    
+    }
+
+    @PostMapping("/search-post")
+    public ResponseEntity<Page<PostsDocument>> searchPosts(
+        @RequestBody PostSearchRequest searchRequest,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size
+    ){
+        Page<PostsDocument> results = elasticSearchService.fullTextSearch(searchRequest, page, size);
+        return ResponseEntity.ok(results);
+    }
 }

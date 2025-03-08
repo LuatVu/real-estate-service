@@ -37,3 +37,4 @@ build/
 mvnw
 mvnw.cmd
 logs/
+docker-compose.yml

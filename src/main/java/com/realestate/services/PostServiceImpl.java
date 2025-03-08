@@ -20,6 +20,7 @@ import com.realestate.models.Posts.Direction;
 import com.realestate.models.Posts.FurnitureType;
 import com.realestate.models.Posts.LegalType;
 import com.realestate.models.Posts.PostStatus;
+import com.realestate.models.Posts.Type;
 import com.realestate.models.Ranking.PriorityLevel;
 import com.realestate.repositories.ImageRepository;
 import com.realestate.repositories.PostRepository;
@@ -57,6 +58,7 @@ public class PostServiceImpl implements PostService{
                             .status(EnumUtils.fromString(PostStatus.class, postDto.getStatus()))
                             .floors(postDto.getFloors())
                             .direction(EnumUtils.fromString(Direction.class, postDto.getDirection()))
+                            .type(EnumUtils.fromString(Type.class, postDto.getType()))
                         .build();
 
         Posts savedPost =  postRepository.save(post);                        

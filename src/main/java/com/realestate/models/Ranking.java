@@ -53,9 +53,19 @@ public class Ranking implements Serializable{
     }
 
     public enum PriorityLevel {
-        DIAMOND,
-        GOLD,
-        SILVER,
-        NORMAL
+        DIAMOND(4),   // Highest priority
+        GOLD(3),
+        SILVER(2),
+        NORMAL(1);    // Lowest priority
+
+        private final int priority;
+
+        PriorityLevel(int priority){
+            this.priority = priority;
+        }
+
+        public int getPriority() {
+            return priority;
+        }
     }
 }

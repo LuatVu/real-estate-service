@@ -12,5 +12,5 @@ public class EnumUtils {
             }
         }
         throw new IllegalArgumentException("Invalid value: " + value + " for enum " + enumType.getSimpleName());
-    }
+    }    
 }

@@ -55,7 +55,8 @@ public class PostServiceImpl implements PostService{
                             .legal(EnumUtils.fromString(LegalType.class, postDto.getLegal())).price(postDto.getPrice())
                             .provinceCode(postDto.getProvinceCode()).districtCode(postDto.getDistrictCode())
                             .wardCode(postDto.getWardCode()).address(postDto.getAddress())                            
-                            .status(EnumUtils.fromString(PostStatus.class, postDto.getStatus()))
+                            // .status(EnumUtils.fromString(PostStatus.class, postDto.getStatus()))
+                            .status(PostStatus.DRAFT) // By default a new post will be Draft
                             .floors(postDto.getFloors())
                             .direction(EnumUtils.fromString(Direction.class, postDto.getDirection()))
                             .type(EnumUtils.fromString(Type.class, postDto.getType()))
@@ -79,7 +80,7 @@ public class PostServiceImpl implements PostService{
         Ranking rankJPA = Ranking.builder().post(savedPost)
                             .priorityLevel(EnumUtils.fromString(PriorityLevel.class,rankDto.getPriorityLevel()))
                             .build();
-        rankingRepository.save(rankJPA);        
+        rankingRepository.save(rankJPA);
         return savedPost;        
     }
 

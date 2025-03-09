@@ -46,25 +46,11 @@ public class ElasticSearchService {
     private ElasticsearchOperations elasticsearchOperations;
 
     public Page<PostsDocument> fullTextSearch(PostSearchRequest request, int page, int size){
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery();
-        boolQuery.should(QueryBuilders.matchQuery("title", request.getQuery()));
-        boolQuery.should(QueryBuilders.matchQuery("description", request.getQuery()));
-        boolQuery.should(QueryBuilders.matchQuery("legal", request.getQuery()));
-        boolQuery.should(QueryBuilders.matchQuery("province", request.getQuery()));
-        boolQuery.should(QueryBuilders.matchQuery("district", request.getQuery()));
-        boolQuery.should(QueryBuilders.matchQuery("ward", request.getQuery()));
-        boolQuery.should(QueryBuilders.matchQuery("address", request.getQuery()));
-        boolQuery.should(QueryBuilders.matchQuery("direction", request.getQuery()));
-        boolQuery.should(QueryBuilders.matchQuery("type", request.getQuery()));
-
-        boolQuery.minimumShouldMatch(1);
-        TermQueryBuilder statusFilter = QueryBuilders.termQuery("status.keyword", "PUBLISHED");
-        boolQuery.filter(statusFilter);
-
+        
         Pageable pageable = PageRequest.of(
             page, 
             size, 
-            Sort.by("_score").descending()
+            Sort.by(Sort.Order.desc("priorityLevelValue"), Sort.Order.desc("bumpTime"))
         );
 
         List<Query> filters = new ArrayList<>();
@@ -102,7 +88,10 @@ public class ElasticSearchService {
             filters.add(Query.of(f -> f.range(RangeQuery.of( r -> r.term(m -> m.field("acreage").lte(request.getMaxAcreage().toString() ) ) ) ) ) );
         }
 
-        NativeQuery searchQuery =  NativeQuery.builder()
+        NativeQuery searchQuery ;
+
+        if(request.getQuery() != null && request.getQuery().trim() != ""){
+            searchQuery =  NativeQuery.builder()
                 .withQuery(q -> q
                 .bool(b -> b
                     .should(s -> s.match(m -> m.field("title").query(request.getQuery())))
@@ -114,12 +103,20 @@ public class ElasticSearchService {
                     .should(s -> s.match(m -> m.field("address").query(request.getQuery())))
                     .should(s -> s.match(m -> m.field("direction").query(request.getQuery())))
                     .should(s -> s.match(m -> m.field("type").query(request.getQuery())))
+                    .should(s -> s.match(m -> m.field("keywords").query(request.getQuery())))
                     .minimumShouldMatch("1")
                     .filter(filters)
                 ))
                 
                 .withPageable(pageable) // Add pagination
                 .build();
+        }else{
+            searchQuery =  NativeQuery.builder()
+                            .withQuery(q -> q.queryString(qs -> qs.query("*")))
+                            .withQuery(q -> q.bool(b -> b.filter(filters)))
+                            .withPageable(pageable)                            
+                            .build();            
+        }
 
         SearchHits<PostsDocument> searchHits = elasticsearchOperations.search(searchQuery, PostsDocument.class);
 

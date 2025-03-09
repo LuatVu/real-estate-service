@@ -10,6 +10,7 @@ import org.springframework.data.elasticsearch.annotations.WriteTypeHint;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.realestate.utilities.MessageUtils;
+import com.realestate.utilities.StringUtils;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,53 +26,63 @@ public class PostsDocument {
     @Id    
     private String postId;
     
-    // @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
+    @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
     private String title;
     private String userId;
     private String username;
     private String phoneNumber;
     private String email;
 
-    // @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
+    @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
     private String description;
     private BigDecimal acreage;
     private Integer bedrooms;
     private Integer bathrooms;
 
-    // @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
+    @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
     private String furniture;
 
-    // @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
+    @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
     private String legal;
     
     @Field(type=FieldType.Double)
     private BigDecimal price;
 
-    // @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
+    @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
     private String address;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
     private LocalDateTime expiredAt;
+    private LocalDateTime bumpTime;
     private Integer floors;
 
-    // @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
+    @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
     private String direction;
 
-    // @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
+    @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
     private String type;
     private String typeCode;
 
-    // @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
+    @Field(type = FieldType.Text, analyzer = "custom_vn_analyzer")
     private String province;
     private String provinceCode;
-    // @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
+    @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
     private String district;
     private String districtCode;
-    // @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
+    @Field(type = FieldType.Text, analyzer = "vietnamese_analyzer")
     private String ward;
     private String wardCode;
 
-    private String status;   
+    private String priorityLevel;
+
+    @Field(type=FieldType.Integer)
+    private Integer priorityLevelValue;
+
+    private String status;    
+
+    @Field(type=FieldType.Text)
+    @JsonIgnore
+    private String keywords;
 
     public static PostsDocument fromEntity(Posts post){
         PostsDocument document = PostsDocument.builder()
@@ -85,25 +96,36 @@ public class PostsDocument {
                                     .acreage(post.getAcreage())
                                     .bedrooms(post.getBedrooms())
                                     .bathrooms(post.getBathrooms())
-                                    .furniture(MessageUtils.getMessage("furniture."+post.getFurniture().getValue()))
-                                    .legal(MessageUtils.getMessage("legal."+post.getLegal().getValue()))
+                                    .furniture(MessageUtils.getMessage(post.getFurniture()!=null?"furniture."+post.getFurniture().getValue():null))
+                                    .legal(MessageUtils.getMessage(post.getLegal()!=null?"legal."+post.getLegal().getValue():null))
                                     .price(post.getPrice())
-                                    .province(MessageUtils.getMessage("province." + post.getProvinceCode()))
+                                    .province(MessageUtils.getMessage(post.getProvinceCode()!=null?"province." + post.getProvinceCode():null))
                                     .provinceCode(post.getProvinceCode())
-                                    .district(MessageUtils.getMessage("district."+post.getDistrictCode()))
+                                    .district(MessageUtils.getMessage(post.getDistrictCode()!=null?"district."+post.getDistrictCode():null))
                                     .districtCode(post.getDistrictCode())
-                                    .ward(MessageUtils.getMessage("ward."+post.getWardCode()))
+                                    .ward(MessageUtils.getMessage(post.getWardCode()!= null?"ward."+post.getWardCode(): null))
                                     .wardCode(post.getWardCode())
                                     .address(post.getAddress())
                                     .createdDate(post.getCreatedDate())
                                     .expiredAt(post.getExpiredAt())                          
                                     .status(post.getStatus().toString())
                                     .floors(post.getFloors())
-                                    .direction(MessageUtils.getMessage("direction."+post.getDirection().toString()))
-                                    .type(MessageUtils.getMessage("type."+post.getType().toString()))
+                                    .direction(MessageUtils.getMessage(post.getDirection()!=null?"direction."+post.getDirection().toString():null))
+                                    .type(MessageUtils.getMessage(post.getType()!=null?"type."+post.getType().toString():null))
                                     .typeCode(post.getType().toString())
+                                    .priorityLevel(post.getRanking().getPriorityLevel().toString())
+                                    .priorityLevelValue(post.getRanking().getPriorityLevel().getPriority())
+                                    .bumpTime(post.getRanking().getBumpTime())                                    
+                                    .keywords(StringUtils.createKeyWords(
+                                                post.getTitle(), post.getDescription(), 
+                                                MessageUtils.getMessage("province." + post.getProvinceCode()),
+                                                MessageUtils.getMessage("district."+post.getDistrictCode()),
+                                                MessageUtils.getMessage("ward."+post.getWardCode()),
+                                                post.getAddress(),
+                                                post.getDirection() != null?MessageUtils.getMessage("direction."+post.getDirection().toString()):"",
+                                                MessageUtils.getMessage("type."+post.getType().toString())
+                                            ))
                                 .build();
-
         return document;
     }
 

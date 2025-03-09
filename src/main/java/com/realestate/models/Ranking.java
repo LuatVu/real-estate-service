@@ -1,8 +1,10 @@
 package com.realestate.models;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -19,7 +21,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
@@ -29,13 +31,15 @@ import jakarta.persistence.Table;
 @Builder
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Ranking implements Serializable{
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "ranking_id")    
     private String rankingId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id", nullable = false)
     @JsonIgnore
     private Posts post;

@@ -12,28 +12,18 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
-import org.springframework.data.elasticsearch.client.elc.NativeQueryBuilder;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-
 import com.realestate.dto.PostSearchRequest;
 import com.realestate.models.Posts;
 import com.realestate.models.PostsDocument;
 import com.realestate.repositories.PostRepository;
 import com.realestate.repositories.PostSearchRepository;
-
-import co.elastic.clients.elasticsearch._types.FieldValue;
+import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 import co.elastic.clients.elasticsearch._types.query_dsl.Query;
 import co.elastic.clients.elasticsearch._types.query_dsl.RangeQuery;
-import co.elastic.clients.json.JsonData;
-
-import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.index.query.TermQueryBuilder;
 import org.springframework.data.elasticsearch.core.SearchHits;
-
-
 import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
-import org.elasticsearch.index.query.BoolQueryBuilder;
 
 @Service
 @Slf4j
@@ -56,20 +46,36 @@ public class ElasticSearchService {
         List<Query> filters = new ArrayList<>();
         filters.add(Query.of(f -> f.term(t -> t.field("status.keyword").value("PUBLISHED"))));
 
-        if (request.getProvinceCode() != null && request.getProvinceCode().trim() != "") {
-            filters.add(Query.of(f -> f.term(t -> t.field("provinceCode.keyword").value(request.getProvinceCode()))));
+        if (request.getCityCode() != null && request.getCityCode().trim() != "") {
+            filters.add(Query.of(f -> f.term(t -> t.field("provinceCode.keyword").value(request.getCityCode()))));
         }
 
         if (request.getDistrictCode() != null && request.getDistrictCode().trim() != "") {
             filters.add(Query.of(f -> f.term(t -> t.field("districtCode.keyword").value(request.getDistrictCode()))));
-        }
+        }       
 
-        if (request.getWardCode() != null && request.getWardCode().trim() != "") {
-            filters.add(Query.of(f -> f.term(t -> t.field("wardCode.keyword").value(request.getWardCode()))));
-        }
+        if(request.getWardCodes() != null && request.getWardCodes().size() > 0){
+            filters.add(Query.of(q -> q.bool(
+                b -> {
+                    BoolQuery.Builder builder = b;
+                    request.getWardCodes().forEach(code -> {
+                        builder.should(s -> s.term(t -> t.field("wardCode.keyword").value(code)));
+                    });
+                    return builder.minimumShouldMatch("1");
+                }
+            )));
+        }        
 
-        if (request.getTypeCode() != null && request.getTypeCode().trim() != "") {
-            filters.add(Query.of(f -> f.term(t -> t.field("typeCode.keyword").value(request.getTypeCode()))));
+        if(request.getTypeCodes() != null && request.getTypeCodes().size() > 0){
+            filters.add(Query.of(q -> q.bool(
+                b -> {
+                    BoolQuery.Builder builder = b;
+                    request.getTypeCodes().forEach(code -> {
+                        builder.should(s -> s.term(t -> t.field("typeCode.keyword").value(code)));
+                    });
+                    return builder.minimumShouldMatch("1");
+                }
+            )));
         }
 
         if (request.getMinPrice() != null) {

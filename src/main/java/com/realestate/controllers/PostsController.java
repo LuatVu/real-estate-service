@@ -31,8 +31,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
-
 @RestController
 @RequestMapping("/api/posts")
 public class PostsController {
@@ -49,52 +47,58 @@ public class PostsController {
     private String baseDirectory;
 
     @PostMapping("/upload")
-    public ResponseEntity<ApiResponseDto<?>> uploadPosts(@RequestPart("files") MultipartFile[] files, @RequestPart("data") PostDto data) throws Exception {
-        try{
+    public ResponseEntity<ApiResponseDto<?>> uploadPosts(@RequestPart("files") MultipartFile[] files,
+            @RequestPart("data") PostDto data) throws Exception {
+        try {
             List<ImagesDto> imageList = new ArrayList<ImagesDto>();
             for (MultipartFile file : files) {
                 String fileName = ftpService.uploadFile(file);
                 ImagesDto imageDto = ImagesDto.builder().filePath(baseDirectory + fileName).fileName(fileName).build();
                 imageList.add(imageDto);
             }
-    
-            if(imageList.size() > 0){
+
+            if (imageList.size() > 0) {
                 imageList.get(0).setIsPrimary(true);
             }
             data.setImages(imageList);
-            
+
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             UserDetailsImpl userPrincipal = (UserDetailsImpl) authentication.getPrincipal();
             data.setUserId(userPrincipal.getId());
 
             Posts postJPA = postService.createPost(data);
-    
+
             return ResponseEntity.ok(ApiResponseDto.builder()
-            .status(String.valueOf(HttpStatus.OK))
-            .message("Upload a post successfully!")
-            .response(postJPA)
-            .build());
-        }catch(Exception e){
+                    .status(String.valueOf(HttpStatus.OK))
+                    .message("Upload a post successfully!")
+                    .response(postJPA)
+                    .build());
+        } catch (Exception e) {
             ApiResponseDto<?> response = new ApiResponseDto<>("500", "Internal Server Error: " + e.getMessage(), null);
-            return  ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }                
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
     }
 
     @GetMapping("/get-post")
-    public ResponseEntity<ApiResponseDto<?>> getPost(@RequestParam("postId") String postId) throws Exception{
-        PostDto postDto = postService.getPost(postId);        
-        return ResponseEntity.ok(ApiResponseDto.builder()
-                                    .status(String.valueOf(HttpStatus.OK))
-                                    .response(postDto)
-                                    .build());        
+    public ResponseEntity<ApiResponseDto<?>> getPost(@RequestParam("postId") String postId) throws Exception {
+        PostDto postDto = postService.getPost(postId);
+        if (postDto != null) {
+            return ResponseEntity.ok(ApiResponseDto.builder()
+                    .status(String.valueOf(HttpStatus.OK))
+                    .response(postDto)
+                    .build());
+        }else{
+            ApiResponseDto<?> response = new ApiResponseDto<>("404", "Not Found", null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
     }
 
     @PostMapping("/search-post")
     public ResponseEntity<Page<PostsDocument>> searchPosts(
-        @RequestBody PostSearchRequest searchRequest,
-        @RequestParam(defaultValue = "0") int page,
-        @RequestParam(defaultValue = "10") int size
-    ){
+            @RequestBody PostSearchRequest searchRequest,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         Page<PostsDocument> results = elasticSearchService.fullTextSearch(searchRequest, page, size);
         return ResponseEntity.ok(results);
     }

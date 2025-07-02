@@ -4,6 +4,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import java.io.IOException;
+import java.time.Duration;
+
 import jakarta.annotation.PreDestroy;
 import lombok.extern.slf4j.Slf4j;
 
@@ -34,7 +36,9 @@ public class FtpConfig {
             ftpClient.connect(ftpServer, ftpPort);        
             ftpClient.login(ftpUsername, ftpPassword);           
             ftpClient.enterLocalPassiveMode();            
-            ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);            
+            ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE); 
+            ftpClient.setConnectTimeout(30000);
+            ftpClient.setDataTimeout(Duration.ofMinutes(1));
             log.info("Connected FTP server!!!");
         } catch (Exception e) {
             throw new RuntimeException("Failed to connect to FTP server", e);

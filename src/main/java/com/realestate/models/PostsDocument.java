@@ -2,6 +2,7 @@ package com.realestate.models;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
@@ -15,13 +16,17 @@ import com.realestate.utilities.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Document(indexName = "posts", writeTypeHint = WriteTypeHint.FALSE)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 public class PostsDocument {
     @Id    
     private String postId;
@@ -84,6 +89,13 @@ public class PostsDocument {
     @JsonIgnore
     private String keywords;
 
+    @Field(type=FieldType.Text)
+    private String imageUrl;
+
+    @Field(type=FieldType.Text)
+    private String imageName;
+
+
     public static PostsDocument fromEntity(Posts post){
         PostsDocument document = PostsDocument.builder()
                                     .postId(post.getPostId())
@@ -126,6 +138,13 @@ public class PostsDocument {
                                                 MessageUtils.getMessage("type."+post.getType().toString())
                                             ))
                                 .build();
+
+        Optional<Images> imgOpt = post.getImages().stream().filter(e -> e.getIsPrimary() != null && e.getIsPrimary()).findFirst();        
+        if(imgOpt.isPresent()){
+            Images img = imgOpt.get();
+            document.setImageUrl(img.getFilePath());
+            document.setImageName(img.getFileName());
+        }
         return document;
     }
 

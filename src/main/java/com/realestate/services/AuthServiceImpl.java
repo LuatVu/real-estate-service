@@ -47,12 +47,9 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public ResponseEntity<ApiResponseDto<?>> signUp(SignUpRequestDto signUpRequestDto)
             throws UserAlreadyExistsException, RoleNotFoundException {
-        // (1)
-        if (userService.existByEmail(signUpRequestDto.getEmail())) {
-            throw new UserAlreadyExistsException("Registration Failed: Provided email already exists. Try sign in or provide another email.");
-        }
-        if (userService.existByUsername(signUpRequestDto.getUsername())) {
-            throw new UserAlreadyExistsException("Registration Failed: Provided username already exists. Try sign in or provide another username.");
+        // (1)    
+        if(userService.existByPhoneNumber(signUpRequestDto.getPhoneNumber())) {
+            throw new UserAlreadyExistsException("Registration Failed: Provided phone number already exists. Try sign in or provide another phone number.");
         }
         // (2)
         User user = createUser(signUpRequestDto);
@@ -62,7 +59,7 @@ public class AuthServiceImpl implements AuthService{
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 ApiResponseDto.builder()
                         .status(String.valueOf(HttpStatus.OK))
-                        .message("User account has been successfully created!")
+                        .message("Tạo tài khoản thành công!")
                         .build()
         );
     }
@@ -74,6 +71,7 @@ public class AuthServiceImpl implements AuthService{
         return User.builder()
                 .email(signUpRequestDto.getEmail())
                 .username(signUpRequestDto.getUsername())
+                .phoneNumber(signUpRequestDto.getPhoneNumber())
                 .passwordHash(passwordEncoder.encode(signUpRequestDto.getPassword()))
                 .isActive(true)
                 .roles(roles)
@@ -84,7 +82,7 @@ public class AuthServiceImpl implements AuthService{
     public ResponseEntity<ApiResponseDto<?>> signIn(SignInRequestDto signInRequestDto) throws Exception{
         // (1)        
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(signInRequestDto.getEmail(), signInRequestDto.getPassword()));        
+                new UsernamePasswordAuthenticationToken(signInRequestDto.getPhoneNumber(), signInRequestDto.getPassword()));        
         
         // (2)
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -101,6 +99,7 @@ public class AuthServiceImpl implements AuthService{
         SignInResponseDto signInResponseDto = SignInResponseDto.builder()
                 .username(userDetails.getUsername())
                 .email(userDetails.getEmail())
+                .phoneNumber(userDetails.getPhoneNumber())
                 .id(userDetails.getId())
                 .token(jwt)
                 .type("Bearer")

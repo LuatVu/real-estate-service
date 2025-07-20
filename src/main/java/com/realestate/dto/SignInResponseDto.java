@@ -15,6 +15,7 @@ public class SignInResponseDto implements Serializable{
     private String id;
     private String username;
     private String email;
+    private String phoneNumber;
     // private List<String> roles;
     private List<String> permissions;
 }

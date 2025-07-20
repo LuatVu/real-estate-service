@@ -5,5 +5,6 @@ import com.realestate.models.User;
 public interface UserService {
     boolean existByUsername(String username);
     boolean existByEmail(String email);
+    boolean existByPhoneNumber(String phoneNumber);
     void save(User user);
 }

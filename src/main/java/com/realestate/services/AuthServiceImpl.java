@@ -1,21 +1,17 @@
 package com.realestate.services;
 
 import java.util.HashSet;
-import java.util.List;
+import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.realestate.dao.UserDetailsImpl;
 import com.realestate.dto.ApiResponseDto;
 import com.realestate.dto.SignInRequestDto;
@@ -28,7 +24,7 @@ import com.realestate.models.User;
 import com.realestate.security.JWTProvider;
 
 @Service
-public class AuthServiceImpl implements AuthService{
+public class AuthServiceImpl implements AuthService {
     @Autowired
     private UserService userService;
 
@@ -47,9 +43,10 @@ public class AuthServiceImpl implements AuthService{
     @Override
     public ResponseEntity<ApiResponseDto<?>> signUp(SignUpRequestDto signUpRequestDto)
             throws UserAlreadyExistsException, RoleNotFoundException {
-        // (1)    
-        if(userService.existByPhoneNumber(signUpRequestDto.getPhoneNumber())) {
-            throw new UserAlreadyExistsException("Registration Failed: Provided phone number already exists. Try sign in or provide another phone number.");
+        // (1)
+        if (userService.existByPhoneNumber(signUpRequestDto.getPhoneNumber())) {
+            throw new UserAlreadyExistsException(
+                    "Registration Failed: Provided phone number already exists. Try sign in or provide another phone number.");
         }
         // (2)
         User user = createUser(signUpRequestDto);
@@ -60,17 +57,24 @@ public class AuthServiceImpl implements AuthService{
                 ApiResponseDto.builder()
                         .status(String.valueOf(HttpStatus.OK))
                         .message("Tạo tài khoản thành công!")
-                        .build()
-        );
+                        .build());
     }
 
     private User createUser(SignUpRequestDto signUpRequestDto) throws RoleNotFoundException {
         Set<Role> roles = new HashSet<Role>();
         roles.add(roleFactory.getInstance("SUBSCRIBER"));
 
+        // Generate default username if null or empty
+        String username = signUpRequestDto.getUsername();
+        if (username == null || username.trim().isEmpty()) {
+            Random random = new Random();
+            int randomNumber = random.nextInt(9000000) + 1000000; // Generate 7-digit number
+            username = "user" + randomNumber;
+        }
+
         return User.builder()
                 .email(signUpRequestDto.getEmail())
-                .username(signUpRequestDto.getUsername())
+                .username(username)
                 .phoneNumber(signUpRequestDto.getPhoneNumber())
                 .passwordHash(passwordEncoder.encode(signUpRequestDto.getPassword()))
                 .isActive(true)
@@ -79,11 +83,11 @@ public class AuthServiceImpl implements AuthService{
     }
 
     @Override
-    public ResponseEntity<ApiResponseDto<?>> signIn(SignInRequestDto signInRequestDto) throws Exception{
-        // (1)        
+    public ResponseEntity<ApiResponseDto<?>> signIn(SignInRequestDto signInRequestDto) throws Exception {
+        // (1)
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(signInRequestDto.getPhoneNumber(), signInRequestDto.getPassword()));        
-        
+                new UsernamePasswordAuthenticationToken(signInRequestDto.getPhoneNumber(),
+                        signInRequestDto.getPassword()));
         // (2)
         SecurityContextHolder.getContext().setAuthentication(authentication);
         // (3)
@@ -92,8 +96,8 @@ public class AuthServiceImpl implements AuthService{
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         // (5)
         // List<String> roles = userDetails.getAuthorities().stream()
-        //         .map(GrantedAuthority::getAuthority)
-        //         .collect(Collectors.toList());
+        // .map(GrantedAuthority::getAuthority)
+        // .collect(Collectors.toList());
 
         // (6)
         SignInResponseDto signInResponseDto = SignInResponseDto.builder()
@@ -112,7 +116,6 @@ public class AuthServiceImpl implements AuthService{
                         .status(String.valueOf(HttpStatus.OK))
                         .message("Sign in successfull!")
                         .response(signInResponseDto)
-                        .build()
-        );
+                        .build());
     }
 }

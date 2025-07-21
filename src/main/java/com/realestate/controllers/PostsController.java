@@ -77,29 +77,5 @@ public class PostsController {
             ApiResponseDto<?> response = new ApiResponseDto<>("500", "Internal Server Error: " + e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-    }
-
-    @GetMapping("/get-post")
-    public ResponseEntity<ApiResponseDto<?>> getPost(@RequestParam("postId") String postId) throws Exception {
-        PostDto postDto = postService.getPost(postId);
-        if (postDto != null) {
-            return ResponseEntity.ok(ApiResponseDto.builder()
-                    .status(String.valueOf(HttpStatus.OK))
-                    .response(postDto)
-                    .build());
-        }else{
-            ApiResponseDto<?> response = new ApiResponseDto<>("404", "Not Found", null);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-
-    }
-
-    @PostMapping("/search-post")
-    public ResponseEntity<Page<PostsDocument>> searchPosts(
-            @RequestBody PostSearchRequest searchRequest,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Page<PostsDocument> results = elasticSearchService.fullTextSearch(searchRequest, page, size);
-        return ResponseEntity.ok(results);
-    }
+    }    
 }

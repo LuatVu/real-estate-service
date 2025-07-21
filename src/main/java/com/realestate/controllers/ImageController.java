@@ -30,16 +30,5 @@ public class ImageController {
     @GetMapping("/test")
     public String getMethodName(@RequestParam("name") String name) {    
         return "Hello" + name ;
-    }
-
-    @GetMapping(value = "/{fileName}")
-    public ResponseEntity<InputStreamResource>  download(@PathVariable String fileName) throws IOException {
-        InputStreamResource response = ftpService.downloadFile(fileName);
-        
-        return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION)
-                    .contentType(MediaType.IMAGE_PNG)
-                    .body(response);
-    }
-    
+    }    
 }

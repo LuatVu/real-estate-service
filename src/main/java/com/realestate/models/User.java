@@ -38,7 +38,7 @@ public class User implements Serializable{
     @Column(name = "user_id")    
     private String userId;
 
-    @Column(name = "username", length = 50, unique = true)
+    @Column(name = "username", length = 50, unique = false)
     private String username;
 
     @Column(name = "phone_number", length = 15, unique = true)

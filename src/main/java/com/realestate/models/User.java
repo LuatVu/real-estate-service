@@ -3,6 +3,7 @@ package com.realestate.models;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -86,4 +87,20 @@ public class User implements Serializable{
         inverseJoinColumns= @JoinColumn(name = "package_id")
     )
     private Set<Packages> packages;
+
+    @Column(name = "google_id", length = 100, unique = true)
+    private String googleId;
+
+    @Column(name = "facebook_id", length = 100, unique = true)
+    private String facebookId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "auth_provider", length = 20, nullable = false)
+    @Default private AuthProvider authProvider = AuthProvider.Credentials;
+
+    public enum AuthProvider {
+        Credentials,
+        Google,
+        Facebook
+    }
 }

@@ -8,5 +8,5 @@ public interface UserService {
     boolean existByEmail(String email);
     boolean existByPhoneNumber(String phoneNumber);
     void save(User user);
-    void checkAndCreateUser(UserDto userDto);
+    void checkAndCreateUser(UserDto userDto) throws Exception;
 }

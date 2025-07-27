@@ -21,7 +21,7 @@ public class Role implements Serializable{
     // @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)    
     // private Set<User> users;    
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
         name = "role_permissions",
         joinColumns = @JoinColumn(name = "role_id"),

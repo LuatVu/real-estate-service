@@ -42,17 +42,20 @@ public class UserDetailsImpl implements UserDetails{
 
     public static UserDetailsImpl build(User user) {        
         // The problem is user.getRoles is empty ===> need to fix it
-        List<GrantedAuthority> authorities = user.getRoles().stream()
+        List<GrantedAuthority> authorities = null;
+        List<String> permissions = null;
+        if(user.getRoles() != null && !user.getRoles().isEmpty()) {
+            authorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRoleName()))
                 .collect(Collectors.toList());
-        
-        List<String> permissions = user.getRoles().stream()
-            .flatMap(role -> role.getPermissions().stream())
-            .distinct()
-            .map(permission -> permission.getPermissionName())
-            .collect(Collectors.toList());
-        
 
+            permissions = user.getRoles().stream()
+                .flatMap(role -> role.getPermissions().stream())
+                .distinct()
+                .map(permission -> permission.getPermissionName())
+                .collect(Collectors.toList());
+        }
+        
         return new UserDetailsImpl(
                 user.getUserId(),
                 user.getUsername(),

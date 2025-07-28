@@ -26,6 +26,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     private GoogleProvider googleProvider;
     @Autowired
     UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    private FacebookProvider facebookProvider;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthTokenFilter.class);
 
@@ -58,10 +60,17 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }else if(facebookJwt != null){
-                // Handle Facebook JWT validation here
-                // Similar to GoogleProvider, you would implement a FacebookProvider
-                // and validate the token accordingly.
-                logger.info("Facebook JWT validation not implemented yet");
+                if(facebookProvider.validateFacebookToken(facebookJwt)){
+                    UserDetails userDetails = facebookProvider.getUserDetailsFromFacebook(facebookJwt);
+                    if (userDetails != null) {
+                        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                                userDetails,
+                                null,
+                                userDetails.getAuthorities());
+                        authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                }
             } else {
                 logger.warn("No JWT token found in request headers");
             }

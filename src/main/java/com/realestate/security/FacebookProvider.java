@@ -66,7 +66,7 @@ public class FacebookProvider {
                 // Convert to UserDetailsImpl or similar as needed
                 com.realestate.models.User userModel = new com.realestate.models.User();
                 userModel.setUserId(user.getId());
-                userModel.setUsername(user.getFieldFirstName() + " " + user.getFieldLastName());
+                userModel.setUsername(user.getFieldName());
                 userModel.setEmail(user.getFieldEmail());
                 userModel.setRoles(roles);
                 userModel.setIsActive(true);

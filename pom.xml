@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.2</version>
+		<version>3.4.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.realestate</groupId>
@@ -144,6 +144,11 @@
 			<artifactId>facebook-java-business-sdk</artifactId>
 			<version>23.0.0</version>
 		</dependency>
+		<dependency>
+    		<groupId>org.liquibase</groupId>
+    		<artifactId>liquibase-core</artifactId>
+    		<version>4.27.0</version>
+		</dependency>		
 	</dependencies>
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -170,6 +175,19 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.liquibase</groupId>
+				<artifactId>liquibase-maven-plugin</artifactId>
+				<version>4.27.0</version>
+				<configuration>
+					<driver>org.mariadb.jdbc.Driver</driver>
+					<url>jdbc:mariadb://localhost:3307/real_estate</url>
+					<username>real_estate</username>
+					<password>${replace_with_exact_password}</password>
+					<changeLogFile>src/main/resources/config/liquibase/master.xml</changeLogFile>
+					<outputChangeLogFile>src/main/resources/config/liquibase/changelog-1.0.xml</outputChangeLogFile>
 				</configuration>
 			</plugin>
 		</plugins>

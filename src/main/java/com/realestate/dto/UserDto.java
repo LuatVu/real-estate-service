@@ -17,4 +17,5 @@ public class UserDto {
     private String googleId;
     private String facebookId;
     private String authProvider; // e.g., "Credentials", "Google", "Facebook"
+    private String profilePicture;
 }

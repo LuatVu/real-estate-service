@@ -40,6 +40,8 @@ public class UserDetailsImpl implements UserDetails{
 
     private List<String> permissions;
 
+    private String image;
+
     public static UserDetailsImpl build(User user) {        
         // The problem is user.getRoles is empty ===> need to fix it
         List<GrantedAuthority> authorities = null;
@@ -64,7 +66,8 @@ public class UserDetailsImpl implements UserDetails{
                 user.getPasswordHash(),
                 authorities,
                 user.getIsActive(),
-                permissions);
+                permissions,
+                user.getProfilePicture());
     }
 
     @Override

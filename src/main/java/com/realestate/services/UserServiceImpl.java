@@ -80,6 +80,7 @@ public class UserServiceImpl implements UserService{
         user.setAuthProvider("Google".equals(userDto.getAuthProvider()) ? User.AuthProvider.Google :
                             "Facebook".equals(userDto.getAuthProvider()) ? User.AuthProvider.Facebook :
                             User.AuthProvider.Credentials);
+        user.setProfilePicture(userDto.getProfilePicture());
         // Save the new user
         save(user);
     }

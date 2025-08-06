@@ -109,6 +109,7 @@ public class AuthServiceImpl implements AuthService {
                 .type("Bearer")
                 // .roles(roles)
                 .permissions(userDetails.getPermissions())
+                .image(userDetails.getImage())
                 .build();
 
         return ResponseEntity.ok(

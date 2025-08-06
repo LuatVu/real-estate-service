@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import org.checkerframework.checker.units.qual.C;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -97,6 +98,18 @@ public class User implements Serializable{
     @Enumerated(EnumType.STRING)
     @Column(name = "auth_provider", length = 20, nullable = false)
     @Default private AuthProvider authProvider = AuthProvider.Credentials;
+
+    @Column(name = "address", length = 100)
+    private String address;
+
+    @Column(name = "identification_code", length = 100)
+    private String identificationCode;
+
+    @Column(name = "tax_id", length = 100)
+    private String taxId;
+
+    @Column(name = "profile_picture", length = 255)
+    private String profilePicture;
 
     public enum AuthProvider {
         Credentials,

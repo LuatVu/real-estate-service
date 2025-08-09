@@ -11,6 +11,9 @@ import com.realestate.services.UserService;
 import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
 import com.realestate.dto.UserDto;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
 
 @RestController
 @RequestMapping("/api/users")
@@ -30,4 +33,14 @@ public class UserController {
                         .response(userDto)
                         .build());
     }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<ApiResponseDto<?>> getUserById(@PathVariable String userId) {
+        return ResponseEntity.ok()
+                .body(ApiResponseDto.builder()
+                        .status(String.valueOf(HttpStatus.OK))
+                        .response(userService.getUserById(userId))
+                        .build());
+    }
+    
 }

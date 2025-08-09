@@ -9,4 +9,5 @@ public interface UserService {
     boolean existByPhoneNumber(String phoneNumber);
     void save(User user);
     void checkAndCreateUser(UserDto userDto) throws Exception;
+    UserDto getUserById(String userId);
 }

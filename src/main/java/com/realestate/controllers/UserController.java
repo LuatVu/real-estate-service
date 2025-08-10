@@ -43,4 +43,13 @@ public class UserController {
                         .build());
     }
     
+    @PostMapping("/update")
+    public ResponseEntity<ApiResponseDto<?>> updateUser(@RequestBody @Valid UserDto userDto) throws Exception {
+        userService.updateUser(userDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponseDto.builder()
+                        .status(String.valueOf(HttpStatus.OK))                        
+                        .build());
+    }
 }

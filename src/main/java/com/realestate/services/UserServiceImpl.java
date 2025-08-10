@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 import com.realestate.models.Role;
 import com.realestate.models.User;
 import com.realestate.repositories.UserRepository;
+
+import jakarta.transaction.Transactional;
+
 import com.realestate.dto.UserDto;
 
 @Service
@@ -44,6 +47,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void checkAndCreateUser(UserDto userDto) throws Exception {
         // validate the userDto fields
         if (userDto.getAuthProvider() == null || userDto.getAuthProvider().isEmpty()) {
@@ -115,5 +119,32 @@ public class UserServiceImpl implements UserService {
                     user.getTaxId(),
                     user.getProfilePicture()))
             .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+    }
+
+    @Override
+    @Transactional
+    public void updateUser(UserDto userDto) throws Exception {
+        // Validate the userDto fields
+        if (userDto.getUserId() == null || userDto.getUserId().isEmpty()) {
+            throw new IllegalArgumentException("User ID must be specified.");
+        }
+
+        Optional<User> userOptional = userRepository.findById(userDto.getUserId());
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found with ID: " + userDto.getUserId());
+        }
+
+        User user = userOptional.get();
+        user.setUsername(userDto.getUsername());
+        // user.setEmail(userDto.getEmail()); //dont allow update user infor
+        // user.setPhoneNumber(userDto.getPhoneNumber());
+        user.setGoogleId(userDto.getGoogleId());
+        user.setFacebookId(userDto.getFacebookId());
+        user.setProfilePicture(userDto.getProfilePicture());
+        user.setAddress(userDto.getAddress());
+        user.setIdentificationCode(userDto.getIdentificationCode());
+        user.setTaxId(userDto.getTaxId()); 
+
+        userRepository.save(user);
     }
 }

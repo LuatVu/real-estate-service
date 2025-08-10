@@ -10,4 +10,5 @@ public interface UserService {
     void save(User user);
     void checkAndCreateUser(UserDto userDto) throws Exception;
     UserDto getUserById(String userId);
+    void updateUser(UserDto userDto) throws Exception;
 }

@@ -128,8 +128,18 @@ public class UserServiceImpl implements UserService {
         if (userDto.getUserId() == null || userDto.getUserId().isEmpty()) {
             throw new IllegalArgumentException("User ID must be specified.");
         }
-
-        Optional<User> userOptional = userRepository.findById(userDto.getUserId());
+        if(userDto.getAuthProvider() == null || userDto.getAuthProvider().isEmpty()) {
+            throw new IllegalArgumentException("AuthProvider must be specified.");
+        }
+        Optional<User> userOptional;
+        if(User.AuthProvider.Google.toString().toLowerCase().equals(userDto.getAuthProvider().toLowerCase())  ){
+            userOptional = userRepository.findByGoogleId(userDto.getUserId());
+        }else if(User.AuthProvider.Facebook.toString().toLowerCase().equals(userDto.getAuthProvider().toLowerCase())){
+            userOptional = userRepository.findByFacebookId(userDto.getUserId());
+        }else{
+            userOptional = userRepository.findById(userDto.getUserId());
+        }
+        
         if (userOptional.isEmpty()) {
             throw new RuntimeException("User not found with ID: " + userDto.getUserId());
         }
@@ -138,8 +148,8 @@ public class UserServiceImpl implements UserService {
         user.setUsername(userDto.getUsername());
         // user.setEmail(userDto.getEmail()); //dont allow update user infor
         // user.setPhoneNumber(userDto.getPhoneNumber());
-        user.setGoogleId(userDto.getGoogleId());
-        user.setFacebookId(userDto.getFacebookId());
+        // user.setGoogleId(userDto.getGoogleId());
+        // user.setFacebookId(userDto.getFacebookId());
         user.setProfilePicture(userDto.getProfilePicture());
         user.setAddress(userDto.getAddress());
         user.setIdentificationCode(userDto.getIdentificationCode());

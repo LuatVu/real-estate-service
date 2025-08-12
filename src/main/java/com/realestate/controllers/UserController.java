@@ -10,6 +10,7 @@ import com.realestate.dto.ApiResponseDto;
 import com.realestate.services.UserService;
 import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
+import com.realestate.dto.ChangePasswordDto;
 import com.realestate.dto.UserDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -52,4 +53,15 @@ public class UserController {
                         .status(String.valueOf(HttpStatus.OK))                        
                         .build());
     }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<ApiResponseDto<?>> changePassword(@RequestBody @Valid ChangePasswordDto changePasswordDto) throws Exception {
+        userService.changePassword(changePasswordDto);
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(ApiResponseDto.builder()
+                        .status(String.valueOf(HttpStatus.OK))
+                        .build());
+    }
+    
 }

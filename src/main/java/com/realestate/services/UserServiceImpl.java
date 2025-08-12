@@ -5,8 +5,9 @@ import java.util.Set;
 
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
+import com.realestate.dto.ChangePasswordDto;
 import com.realestate.models.Role;
 import com.realestate.models.User;
 import com.realestate.repositories.UserRepository;
@@ -21,6 +22,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private RoleFactory roleFactory;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -157,4 +161,36 @@ public class UserServiceImpl implements UserService {
 
         userRepository.save(user);
     }
+
+    @Override
+    @Transactional
+    public void changePassword(ChangePasswordDto changePasswordDto) throws Exception {
+        // Validate the userDto fields
+        if (changePasswordDto.getUserId() == null || changePasswordDto.getUserId().isEmpty()) {
+            throw new IllegalArgumentException("User ID must be specified.");
+        }
+        if (changePasswordDto.getNewPassword() == null || changePasswordDto.getNewPassword().isEmpty()) {
+            throw new IllegalArgumentException("New password must be specified.");
+        }
+        if (changePasswordDto.getOldPassword() == null || changePasswordDto.getOldPassword().isEmpty()) {
+            throw new IllegalArgumentException("Old password must be specified.");
+        }
+        if(changePasswordDto.getOldPassword().equals(changePasswordDto.getNewPassword())){
+            throw new IllegalArgumentException("New password must be different from old password.");
+        }
+
+        Optional<User> userOptional = userRepository.findById(changePasswordDto.getUserId());
+        if (userOptional.isEmpty()) {
+            throw new RuntimeException("User not found with ID: " + changePasswordDto.getUserId());
+        }
+
+        User user = userOptional.get();
+        if (!passwordEncoder.matches(changePasswordDto.getOldPassword(), user.getPasswordHash())) {
+            throw new IllegalArgumentException("Old password is incorrect.");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(changePasswordDto.getNewPassword()));
+        userRepository.save(user);
+    }
+
 }

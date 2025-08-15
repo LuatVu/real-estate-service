@@ -12,4 +12,5 @@ public class ChangePasswordDto {
     private String userId;
     private String oldPassword;
     private String newPassword;
+    private String confirmPassword;
 }

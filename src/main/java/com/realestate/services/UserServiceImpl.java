@@ -178,6 +178,9 @@ public class UserServiceImpl implements UserService {
         if(changePasswordDto.getOldPassword().equals(changePasswordDto.getNewPassword())){
             throw new IllegalArgumentException("New password must be different from old password.");
         }
+        if(!changePasswordDto.getNewPassword().equals(changePasswordDto.getConfirmPassword())){
+            throw new IllegalArgumentException("New password and confirm password must match.");
+        }
 
         Optional<User> userOptional = userRepository.findById(changePasswordDto.getUserId());
         if (userOptional.isEmpty()) {

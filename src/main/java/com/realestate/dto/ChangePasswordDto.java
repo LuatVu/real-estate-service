@@ -18,8 +18,8 @@ public class ChangePasswordDto {
     @NotBlank(message = "New password is required")
     @Size(min = 8, message = "Password must be at least 8 characters long")
     @Pattern(
-        regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]+$",
-        message = "New password must contain at least one lowercase letter, one uppercase letter, one number, and one special character (@$!%*?&). No whitespace allowed."
+        regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9])[^\\s]+$",
+        message = "Password must contain at least one lowercase letter, one uppercase letter, one number, and one special character. No whitespace allowed."
     )
     private String newPassword;
     

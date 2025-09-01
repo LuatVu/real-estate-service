@@ -37,8 +37,8 @@ public class Images implements Serializable{
     @JsonIgnore
     private Posts post;
 
-    @Column(name = "file_path", nullable = false)
-    private String filePath;
+    @Column(name = "file_url", nullable = false)
+    private String fileUrl;
 
     @Column(name = "file_name", nullable = false)
     private String fileName;

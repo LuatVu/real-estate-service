@@ -18,7 +18,7 @@ import lombok.Setter;
 public class ImagesDto implements Serializable{
     private String imageId;
     private String postId;
-    private String filePath;
+    private String fileUrl;
     private String fileName;
     private Integer fileSize;
     private String mimeType;

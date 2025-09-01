@@ -142,7 +142,7 @@ public class PostsDocument {
         Optional<Images> imgOpt = post.getImages().stream().filter(e -> e.getIsPrimary() != null && e.getIsPrimary()).findFirst();        
         if(imgOpt.isPresent()){
             Images img = imgOpt.get();
-            document.setImageUrl(img.getFilePath());
+            document.setImageUrl(img.getFileUrl());
             document.setImageName(img.getFileName());
         }
         return document;

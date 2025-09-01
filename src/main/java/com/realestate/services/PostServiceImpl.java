@@ -53,7 +53,8 @@ public class PostServiceImpl implements PostService{
                             .bathrooms(postDto.getBathrooms())
                             .furniture(EnumUtils.fromString(FurnitureType.class, postDto.getFurniture()) )
                             .legal(EnumUtils.fromString(LegalType.class, postDto.getLegal())).price(postDto.getPrice())
-                            .provinceCode(postDto.getProvinceCode()).districtCode(postDto.getDistrictCode())
+                            .provinceCode(postDto.getProvinceCode())
+                            // .districtCode(postDto.getDistrictCode())
                             .wardCode(postDto.getWardCode()).address(postDto.getAddress())                            
                             // .status(EnumUtils.fromString(PostStatus.class, postDto.getStatus()))
                             .status(PostStatus.DRAFT) // By default a new post will be Draft
@@ -68,7 +69,8 @@ public class PostServiceImpl implements PostService{
         List<Images> imageJPAsList = new ArrayList<Images>();
         for (ImagesDto imagesDto : imagesDtos) {
             Images image = Images.builder()
-                            .filePath(imagesDto.getFilePath()).fileName(imagesDto.getFileName())
+                            .fileUrl(imagesDto.getFileUrl())
+                            .fileName(imagesDto.getFileName())
                             .post(savedPost)
                             .isPrimary(imagesDto.getIsPrimary())                
                             .build();
@@ -96,7 +98,7 @@ public class PostServiceImpl implements PostService{
                 ImagesDto imgDTO = ImagesDto.builder()
                                     .imageId(img.getImageId())
                                     .postId(postId)
-                                    .filePath(img.getFilePath())
+                                    .fileUrl(img.getFileUrl())
                                     .fileName(img.getFileName())
                                     .isPrimary(img.getIsPrimary())
                                     .build();

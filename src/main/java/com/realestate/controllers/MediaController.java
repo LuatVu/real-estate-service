@@ -10,7 +10,12 @@ import com.realestate.services.MediaService;
 import lombok.RequiredArgsConstructor;
 
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
@@ -29,6 +34,26 @@ public class MediaController {
             // Handle exceptions
             return ResponseEntity.badRequest().body("Error uploading file: " + e.getMessage());
         }
-    }
+    }    
+
+    @GetMapping(value = "/image/{key}")
+    public ResponseEntity<Resource> getImage(@PathVariable String key) {
+        try {
+            Resource resource = mediaService.downloadFile(key);
+            String contentType = mediaService.getContentType(key);
+            
+            // Ensure it's an image content type
+            if (!contentType.startsWith("image/")) {
+                return ResponseEntity.badRequest().build();
+            }
+            
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CACHE_CONTROL, "max-age=3600")
+                    .body(resource);
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }    
     
 }

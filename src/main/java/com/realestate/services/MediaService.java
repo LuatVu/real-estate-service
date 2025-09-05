@@ -6,6 +6,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.realestate.config.CloudflareR2Properties;
 import com.realestate.exception.UnsupportedMediaTypeException;
 
 import lombok.RequiredArgsConstructor;
@@ -18,8 +19,6 @@ import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
-import org.springframework.beans.factory.annotation.Value;
-
 import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
@@ -29,8 +28,7 @@ import java.util.UUID;
 public class MediaService {
     private final S3Client s3Client;
 
-    @Value("${cloudflare.r2.bucket}")
-    private String bucket;
+    private final CloudflareR2Properties cloudflareR2Properties;
 
     public String uploadFile(MultipartFile file) throws FileUploadException, UnsupportedMediaTypeException {
         // 1. Resolve filename and content type
@@ -54,7 +52,7 @@ public class MediaService {
 
         // 4. Prepare S3 Put request
         PutObjectRequest req = PutObjectRequest.builder()
-            .bucket(bucket)
+            .bucket(cloudflareR2Properties.getBucket())
             .key(key)
             .contentType(contentType)
             .build();
@@ -80,7 +78,7 @@ public class MediaService {
     public Resource downloadFile(String key) throws Exception {
         try {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                .bucket(bucket)
+                .bucket(cloudflareR2Properties.getBucket())
                 .key(key)
                 .build();
 
@@ -94,7 +92,7 @@ public class MediaService {
     public String getContentType(String key) {
         try {
             HeadObjectRequest headObjectRequest = HeadObjectRequest.builder()
-                .bucket(bucket)
+                .bucket(cloudflareR2Properties.getBucket())
                 .key(key)
                 .build();
 

@@ -10,14 +10,15 @@ import com.realestate.services.MediaService;
 
 import lombok.RequiredArgsConstructor;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import com.realestate.utilities.StringUtils;
+import java.time.Instant;
 
 @RestController
 @RequestMapping("/api/media")
@@ -25,44 +26,43 @@ import org.springframework.web.bind.annotation.PostMapping;
 public class MediaController {
     private final MediaService mediaService;
 
-    @PostMapping("/upload")
-    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file) {
+    @PostMapping("/draft/upload")
+    public ResponseEntity<String> postMethodName(@RequestParam("file") MultipartFile file) {
+        // TODO: process POST request
+        String original = Optional.ofNullable(file.getOriginalFilename())
+                .orElseThrow(() -> new UnsupportedMediaTypeException("Filename is missing"))
+                .toLowerCase();
+        Optional.ofNullable(file.getContentType())
+                .orElseThrow(() -> new UnsupportedMediaTypeException("Content-Type is unknown"));
+        
+        String ext = StringUtils.getFileExtension(original);        
+        long epochMilli = Instant.now().toEpochMilli();
+        String key = String.format("%s-%s.%s", epochMilli, UUID.randomUUID(), ext);
+
+        return ResponseEntity.ok(key);
+    }
+
+    @PostMapping("/upload/{key}")
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable String key) {
         try {
-            String key = mediaService.uploadFile(file);
+            String original = Optional.ofNullable(file.getOriginalFilename())
+                    .orElseThrow(() -> new UnsupportedMediaTypeException("Filename is missing"))
+                    .toLowerCase();
+            String contentType = Optional.ofNullable(file.getContentType())
+                    .orElseThrow(() -> new UnsupportedMediaTypeException("Content-Type is unknown"));
+            String ext = StringUtils.getFileExtension(original);
+            String folder = switch (ext) {
+                case "jpg", "jpeg", "png", "gif", "webp", "bmp", "svg" -> "images";
+                // case "mp4","mov" -> "videos";
+                // case "pdf","doc","docx","txt" -> "documents";
+                default -> throw new UnsupportedMediaTypeException("Unsupported file type: " + contentType);
+            };
+            mediaService.uploadFile(file, folder + "/" + key);
             return ResponseEntity.ok(key);
         } catch (FileUploadException | UnsupportedMediaTypeException e) {
             // Handle exceptions
             return ResponseEntity.badRequest().body("Error uploading file: " + e.getMessage());
         }
     }
-
-    @GetMapping(value = "/image/{key}")
-    public ResponseEntity<Resource> getImage(@PathVariable String key) {
-        String fullPath = "images/" + key;
-        try {
-            Resource resource = mediaService.downloadFile(fullPath);
-            
-            if (!resource.exists() || !resource.isReadable()) {
-                System.out.println("Resource exists: " + resource.exists() + ", isReadable: " +
-                        (resource.exists() ? resource.isReadable() : "N/A"));
-                return ResponseEntity.notFound().build();
-            }
-
-            String contentType = mediaService.getContentType(fullPath);
-
-            // Ensure it's an image content type
-            if (!contentType.startsWith("image/")) {
-                return ResponseEntity.badRequest().build();
-            }
-
-            return ResponseEntity.ok()
-                    .contentType(MediaType.parseMediaType(contentType))
-                    .header(HttpHeaders.CACHE_CONTROL, "max-age=3600")
-                    .body(resource);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.notFound().build();
-        }
-    }
-
+    
 }

@@ -43,4 +43,12 @@ public class StringUtils {
                 .replace("ỳ", "y").replace("ý", "y").replace("ỷ", "y").replace("ỹ", "y").replace("ỵ", "y")
                 .replace("đ", "d");
     }
+
+    public static String getFileExtension(String filename) {
+        int idx = filename.lastIndexOf('.');
+        if (idx < 0 || idx == filename.length()-1) {
+            throw new IllegalArgumentException("Invalid file extension in filename: " + filename);
+        }
+        return filename.substring(idx+1);
+    }
 }

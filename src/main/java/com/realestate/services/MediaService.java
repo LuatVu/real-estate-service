@@ -30,25 +30,17 @@ public class MediaService {
 
     private final CloudflareR2Properties cloudflareR2Properties;
 
-    public String uploadFile(MultipartFile file) throws FileUploadException, UnsupportedMediaTypeException {
-        // 1. Resolve filename and content type
-        String original = Optional.ofNullable(file.getOriginalFilename())
-            .orElseThrow(() -> new UnsupportedMediaTypeException("Filename is missing"))
-            .toLowerCase();
+    public void uploadFile(MultipartFile file, String key) throws FileUploadException, UnsupportedMediaTypeException {
+        // 1. Resolve filename and content type        
+        if(file.isEmpty() || file.getSize() == 0) {
+            throw new UnsupportedMediaTypeException("File is empty");
+        }
+        if(file.getOriginalFilename() == null) {
+            throw new UnsupportedMediaTypeException("Filename is missing");
+        }
+        
         String contentType = Optional.ofNullable(file.getContentType())
-            .orElseThrow(() -> new UnsupportedMediaTypeException("Content-Type is unknown"));
-
-        // 2. Decide folder by extension
-        String ext = getFileExtension(original);
-        String folder = switch (ext) {
-            case "jpg","jpeg","png","gif" -> "images";
-            // case "mp4","mov"              -> "videos";
-            // case "pdf","doc","docx","txt" -> "documents";
-            default -> throw new UnsupportedMediaTypeException("Unsupported file type: " + contentType);
-        };
-
-        // 3. Build object key
-        String key = String.format("%s/%s-%s", folder, UUID.randomUUID(), original);
+            .orElseThrow(() -> new UnsupportedMediaTypeException("Content-Type is unknown"));        
 
         // 4. Prepare S3 Put request
         PutObjectRequest req = PutObjectRequest.builder()
@@ -63,8 +55,7 @@ public class MediaService {
         } catch (IOException e) {
             throw new FileUploadException("File upload to Cloudflare R2 failed", e);
         }
-
-        return key;
+        // Note: We do not return the URL here, as the URL can be constructed from the key and bucket name.
     }
 
     private String getFileExtension(String filename) {

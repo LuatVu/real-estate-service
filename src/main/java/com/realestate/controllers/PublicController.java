@@ -1,9 +1,7 @@
 package com.realestate.controllers;
 
-import java.io.IOException;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -22,7 +20,7 @@ import com.realestate.dto.PostDto;
 import com.realestate.dto.PostSearchRequest;
 import com.realestate.models.PostsDocument;
 import com.realestate.services.ElasticSearchService;
-import com.realestate.services.FTPService;
+import com.realestate.services.MediaService;
 import com.realestate.services.PostService;
 
 @RestController
@@ -33,7 +31,8 @@ public class PublicController {
     @Autowired
     private ElasticSearchService elasticSearchService;
     @Autowired
-    private FTPService ftpService;
+    private MediaService mediaService;
+
 
     @GetMapping("/get-post")
     public ResponseEntity<ApiResponseDto<?>> getPost(@RequestParam("postId") String postId) throws Exception {
@@ -59,13 +58,21 @@ public class PublicController {
         return ResponseEntity.ok(results);
     }
 
-    @GetMapping(value = "/images/{fileName}")
-    public ResponseEntity<InputStreamResource>  download(@PathVariable String fileName) throws IOException {
-        InputStreamResource response = ftpService.downloadFile(fileName);
-        
-        return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION)
-                    .contentType(MediaType.IMAGE_PNG)
-                    .body(response);
+    @GetMapping(value = "/image/{fileName}")
+    public ResponseEntity<Resource>  download(@PathVariable String fileName) {
+        String fullPath = "images/" + fileName;
+        try{
+            Resource resource = mediaService.downloadFile(fullPath);
+            if(resource == null || !resource.exists() || !resource.isReadable()){
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+            String contentType = mediaService.getContentType(fullPath);
+            return ResponseEntity.ok()
+                    .contentType(MediaType.parseMediaType(contentType))
+                    .header(HttpHeaders.CACHE_CONTROL, "max-age=3600")
+                    .body(resource);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 }

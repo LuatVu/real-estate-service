@@ -59,6 +59,7 @@ public class PostServiceImpl implements PostService{
                             // .status(EnumUtils.fromString(PostStatus.class, postDto.getStatus()))
                             .status(PostStatus.DRAFT) // By default a new post will be Draft
                             .floors(postDto.getFloors())
+                            .frontage(postDto.getFrontage())
                             .direction(EnumUtils.fromString(Direction.class, postDto.getDirection()))
                             .type(EnumUtils.fromString(Type.class, postDto.getType()))
                         .build();

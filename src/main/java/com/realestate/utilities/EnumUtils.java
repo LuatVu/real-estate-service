@@ -3,7 +3,7 @@ package com.realestate.utilities;
 public class EnumUtils {
     // convert string to enum
     public static <T extends Enum<T>> T fromString(Class<T> enumType, String value) {
-        if(value == null){
+        if(value == null || value.isEmpty()) {
             return null;
         }
         for (T enumConstant : enumType.getEnumConstants()) {
@@ -12,5 +12,5 @@ public class EnumUtils {
             }
         }
         throw new IllegalArgumentException("Invalid value: " + value + " for enum " + enumType.getSimpleName());
-    }    
+    }
 }

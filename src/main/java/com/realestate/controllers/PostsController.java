@@ -1,7 +1,6 @@
 package com.realestate.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -12,8 +11,6 @@ import com.realestate.dao.UserDetailsImpl;
 import com.realestate.dto.ApiResponseDto;
 import com.realestate.dto.PostDto;
 import com.realestate.models.Posts;
-import com.realestate.services.ElasticSearchService;
-import com.realestate.services.FTPService;
 import com.realestate.services.PostService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

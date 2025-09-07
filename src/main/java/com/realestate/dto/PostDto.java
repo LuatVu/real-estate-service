@@ -39,6 +39,7 @@ public class PostDto implements Serializable{
     private LocalDateTime expiredAt;
     private String status;
     private Integer floors;
+    private Integer frontage;
     private String direction;
     @NotBlank(message="Type is required")
     private String type;

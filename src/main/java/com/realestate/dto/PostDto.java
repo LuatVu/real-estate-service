@@ -46,5 +46,5 @@ public class PostDto implements Serializable{
     private List<ImagesDto> images;
     @NotNull(message="Ranking is required")
     private RankingDto rankingDto;
-    
+    private String transactionType;
 }

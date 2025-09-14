@@ -1,19 +1,21 @@
 package com.realestate.services;
 
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.stereotype.Service;
-
 import com.realestate.dto.ImagesDto;
 import com.realestate.dto.PostDto;
 import com.realestate.dto.RankingDto;
 import com.realestate.models.Images;
 import com.realestate.models.Posts;
+import com.realestate.models.Posts.TransactionType;
 import com.realestate.models.Ranking;
 import com.realestate.models.User;
 import com.realestate.models.Posts.Direction;
@@ -114,8 +116,8 @@ public class PostServiceImpl implements PostService{
                                 .acreage(model.getAcreage())
                                 .bedrooms(model.getBedrooms())
                                 .bathrooms(model.getBathrooms())
-                                .furniture(model.getFurniture().getValue())
-                                .legal(model.getLegal().getValue())                                
+                                .furniture(model.getFurniture() != null ? model.getFurniture().getValue() : null)
+                                .legal(model.getLegal() != null ? model.getLegal().getValue() : null)                                
                                 .price(model.getPrice())
                                 .provinceCode(model.getProvinceCode())
                                 .districtCode(model.getDistrictCode())
@@ -126,7 +128,7 @@ public class PostServiceImpl implements PostService{
                                 .expiredAt(model.getExpiredAt())
                                 .status(model.getStatus().toString())
                                 .floors(model.getFloors())
-                                .direction(model.getDirection().name())
+                                .direction(model.getDirection() != null ? model.getDirection().name() : null)
                                 .images(imagesDtos)
                                 .build();
             return postDTO;
@@ -134,5 +136,71 @@ public class PostServiceImpl implements PostService{
             return null;
         }
         
+    }
+
+    public List<PostDto> getPost(com.realestate.dto.PostRequest postRequest, String userId) throws Exception{
+        
+        // Calculate date filter if lastDate is provided
+        LocalDateTime dateFilter = null;
+        if (postRequest.getLastDate() != null && postRequest.getLastDate() > 0) {
+            dateFilter = LocalDateTime.now().minusDays(postRequest.getLastDate());
+        }        
+        
+        // Get posts from repository with filters
+        List<Posts> posts = postRepository.findPostsWithFilters(
+            postRequest.getTitle(),
+            EnumUtils.fromString(TransactionType.class, postRequest.getTransactionType()),
+            dateFilter,
+            userId
+        );
+        
+        List<PostDto> postDtos = new ArrayList<>();
+        
+        for (Posts post : posts) {
+            // Get images for each post
+            List<Images> images = post.getImages();
+            List<ImagesDto> imagesDtos = new ArrayList<>();
+            
+            if (images != null) {
+                images.forEach(img -> {
+                    ImagesDto imgDTO = ImagesDto.builder()
+                                        .imageId(img.getImageId())
+                                        .postId(post.getPostId())
+                                        .fileUrl(img.getFileUrl())
+                                        .fileName(img.getFileName())
+                                        .isPrimary(img.getIsPrimary())
+                                        .build();
+                    imagesDtos.add(imgDTO);
+                });
+            }
+            
+            PostDto postDTO = PostDto.builder()
+                                .postId(post.getPostId())
+                                .userId(post.getUser().getUserId())                                
+                                .title(post.getTitle())
+                                .description(post.getDescription())                                
+                                .acreage(post.getAcreage())
+                                .bedrooms(post.getBedrooms())
+                                .bathrooms(post.getBathrooms())
+                                .furniture(post.getFurniture() != null ? post.getFurniture().getValue() : null)
+                                .legal(post.getLegal() != null ? post.getLegal().getValue() : null)                                
+                                .price(post.getPrice())
+                                .provinceCode(post.getProvinceCode())
+                                .districtCode(post.getDistrictCode())
+                                .wardCode(post.getWardCode())
+                                .address(post.getAddress())
+                                .createdDate(post.getCreatedDate())
+                                .updatedDate(post.getUpdatedDate())
+                                .expiredAt(post.getExpiredAt())
+                                .status(post.getStatus().toString())
+                                .type(post.getType().name())
+                                .floors(post.getFloors())
+                                .direction(post.getDirection() != null ? post.getDirection().name() : null)
+                                .transactionType(post.getTransactionType() != null ? post.getTransactionType().name() : null)
+                                .images(imagesDtos)
+                                .build();
+            postDtos.add(postDTO);
+        }
+        return postDtos;
     }
 }

@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.facebook.ads.sdk.Transaction;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -110,6 +112,11 @@ public class Posts implements Serializable{
 
     @Column(name = "frontage")
     private Integer frontage;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name= "transaction_type", length = 20)
+    private TransactionType transactionType;
+
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Images> images;
@@ -148,6 +155,10 @@ public class Posts implements Serializable{
         public String getValue() {
             return value;
         }        
+    }
+
+    public enum TransactionType{
+        SELL, RENT
     }
 
     public enum LegalType {

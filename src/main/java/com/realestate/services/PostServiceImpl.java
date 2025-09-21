@@ -203,4 +203,16 @@ public class PostServiceImpl implements PostService{
         }
         return postDtos;
     }
+
+    @Transactional
+    public void updatePostStatus(String postId, String status) throws Exception{
+        Optional<Posts> postJPA = postRepository.findById(postId);
+        if(postJPA.isPresent()){
+            Posts post = postJPA.get();
+            post.setStatus(EnumUtils.fromString(PostStatus.class, status));
+            postRepository.save(post);
+        }else{
+            throw new Exception("Post not found with ID: " + postId);
+        }
+    }
 }

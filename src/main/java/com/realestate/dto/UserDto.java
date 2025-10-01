@@ -18,6 +18,7 @@ public class UserDto {
     private String username;
     private String email;
     private String phoneNumber;
+    private String contactPhoneNumber;
     private String googleId;
     private String facebookId;
     private String authProvider; // e.g., "credentials", "google", "facebook"

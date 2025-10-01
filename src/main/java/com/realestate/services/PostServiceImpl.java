@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.realestate.dto.ImagesDto;
 import com.realestate.dto.PostDto;
 import com.realestate.dto.RankingDto;
+import com.realestate.dto.UserDto;
 import com.realestate.models.Images;
 import com.realestate.models.Posts;
 import com.realestate.models.Posts.TransactionType;
@@ -97,6 +98,15 @@ public class PostServiceImpl implements PostService{
             List<Images> images = model.getImages();
             List<ImagesDto> imagesDtos = new ArrayList<>();
 
+            UserDto userDto = UserDto.builder()
+                                    .userId(model.getUser().getUserId())
+                                    .username(model.getUser().getUsername())
+                                    .email(model.getUser().getEmail())
+                                    .phoneNumber(model.getUser().getPhoneNumber())
+                                    .contactPhoneNumber(model.getUser().getContactPhoneNumber())
+                                    .profilePicture(model.getUser().getProfilePicture())
+                                    .build();
+
             images.forEach(img -> {
                 ImagesDto imgDTO = ImagesDto.builder()
                                     .imageId(img.getImageId())
@@ -129,7 +139,9 @@ public class PostServiceImpl implements PostService{
                                 .status(model.getStatus().toString())
                                 .floors(model.getFloors())
                                 .direction(model.getDirection() != null ? model.getDirection().name() : null)
+                                .frontage(model.getFrontage())
                                 .images(imagesDtos)
+                                .user(userDto)
                                 .build();
             return postDTO;
         }else{

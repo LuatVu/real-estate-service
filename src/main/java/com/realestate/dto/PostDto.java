@@ -47,4 +47,5 @@ public class PostDto implements Serializable{
     @NotNull(message="Ranking is required")
     private RankingDto rankingDto;
     private String transactionType;
+    private UserDto user;
 }

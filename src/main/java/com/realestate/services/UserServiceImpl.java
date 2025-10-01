@@ -115,6 +115,7 @@ public class UserServiceImpl implements UserService {
                     user.getUsername(),
                     user.getEmail(),
                     user.getPhoneNumber(),
+                    user.getContactPhoneNumber(),
                     user.getGoogleId(),
                     user.getFacebookId(),
                     user.getAuthProvider().name(),

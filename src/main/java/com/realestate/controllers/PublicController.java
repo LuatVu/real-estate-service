@@ -34,8 +34,8 @@ public class PublicController {
     private MediaService mediaService;
 
 
-    @GetMapping("/get-post")
-    public ResponseEntity<ApiResponseDto<?>> getPost(@RequestParam("postId") String postId) throws Exception {
+    @GetMapping("/get-post/{postId}")
+    public ResponseEntity<ApiResponseDto<?>> getPost(@PathVariable String postId) throws Exception {
         PostDto postDto = postService.getPost(postId);
         if (postDto != null) {
             return ResponseEntity.ok(ApiResponseDto.builder()

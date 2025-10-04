@@ -15,7 +15,6 @@ public class PostSearchRequest {
     private BigDecimal maxAcreage;
 
     private List<String> typeCodes;
-    private String cityCode;
-    private String districtCode;
+    private String cityCode;    
     private List<String> wardCodes;
 }

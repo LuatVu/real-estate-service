@@ -5,10 +5,11 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import com.realestate.dto.ImagesDto;
 import com.realestate.dto.PostDto;
@@ -226,5 +227,111 @@ public class PostServiceImpl implements PostService{
         }else{
             throw new Exception("Post not found with ID: " + postId);
         }
+    }
+
+    public Page<PostDto> searchPosts(com.realestate.dto.PostSearchRequest request, int page, int size) throws Exception{
+        
+        // Convert type codes from strings to enum values if needed
+        List<String> typeCodes = new ArrayList<>();
+        Boolean isTypeCodesEmpty = true;
+        if (request.getTypeCodes() != null && !request.getTypeCodes().isEmpty()) {
+            typeCodes = request.getTypeCodes();
+            isTypeCodesEmpty = false;
+        }
+        
+        // Convert ward codes list
+        List<String> wardCodes = new ArrayList<>();
+        Boolean isWardCodesEmpty = true;
+        if (request.getWardCodes() != null && !request.getWardCodes().isEmpty()) {
+            wardCodes = request.getWardCodes();
+            isWardCodesEmpty = false;
+        }
+        
+        // Create Pageable with sorting by priority level and bump time
+        Pageable pageable = PageRequest.of(page, size);
+        
+        // Convert BigDecimal to Double for repository call
+        Double minPrice = request.getMinPrice() != null ? request.getMinPrice().doubleValue() : null;
+        Double maxPrice = request.getMaxPrice() != null ? request.getMaxPrice().doubleValue() : null;
+        Double minAcreage = request.getMinAcreage() != null ? request.getMinAcreage().doubleValue() : null;
+        Double maxAcreage = request.getMaxAcreage() != null ? request.getMaxAcreage().doubleValue() : null;
+        
+        // Get posts from repository with search filters
+        Page<Posts> postsPage = postRepository.searchPosts(
+            request.getQuery(),
+            minPrice,
+            maxPrice,
+            minAcreage,
+            maxAcreage,
+            typeCodes,
+            isTypeCodesEmpty,
+            request.getCityCode(),            
+            wardCodes,
+            isWardCodesEmpty,
+            pageable
+        );
+        
+        List<Posts> posts = postsPage.getContent();
+        List<PostDto> postDtos = new ArrayList<>();
+        
+        for (Posts post : posts) {
+            // Get images for each post
+            List<Images> images = post.getImages();
+            List<ImagesDto> imagesDtos = new ArrayList<>();
+            
+            if (images != null) {
+                images.forEach(img -> {
+                    ImagesDto imgDTO = ImagesDto.builder()
+                                        .imageId(img.getImageId())
+                                        .postId(post.getPostId())
+                                        .fileUrl(img.getFileUrl())
+                                        .fileName(img.getFileName())
+                                        .isPrimary(img.getIsPrimary())
+                                        .build();
+                    imagesDtos.add(imgDTO);
+                });
+            }
+            
+            // Get user information
+            UserDto userDto = UserDto.builder()
+                                    .userId(post.getUser().getUserId())
+                                    .username(post.getUser().getUsername())
+                                    .email(post.getUser().getEmail())
+                                    .phoneNumber(post.getUser().getPhoneNumber())
+                                    .contactPhoneNumber(post.getUser().getContactPhoneNumber())
+                                    .profilePicture(post.getUser().getProfilePicture())
+                                    .build();
+            
+            PostDto postDTO = PostDto.builder()
+                                .postId(post.getPostId())
+                                .userId(post.getUser().getUserId())                                
+                                .title(post.getTitle())
+                                .description(post.getDescription())                                
+                                .acreage(post.getAcreage())
+                                .bedrooms(post.getBedrooms())
+                                .bathrooms(post.getBathrooms())
+                                .furniture(post.getFurniture() != null ? post.getFurniture().getValue() : null)
+                                .legal(post.getLegal() != null ? post.getLegal().getValue() : null)                                
+                                .price(post.getPrice())
+                                .provinceCode(post.getProvinceCode())
+                                .districtCode(post.getDistrictCode())
+                                .wardCode(post.getWardCode())
+                                .address(post.getAddress())
+                                .createdDate(post.getCreatedDate())
+                                .updatedDate(post.getUpdatedDate())
+                                .expiredAt(post.getExpiredAt())
+                                .status(post.getStatus().toString())
+                                .type(post.getType() != null ? post.getType().name() : null)
+                                .floors(post.getFloors())
+                                .frontage(post.getFrontage())
+                                .direction(post.getDirection() != null ? post.getDirection().name() : null)
+                                .transactionType(post.getTransactionType() != null ? post.getTransactionType().name() : null)
+                                .images(imagesDtos)
+                                .user(userDto)
+                                .build();
+            postDtos.add(postDTO);
+        }
+        
+        return new PageImpl<>(postDtos, pageable, postsPage.getTotalElements());
     }
 }

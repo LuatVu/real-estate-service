@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.realestate.dto.ApiResponseDto;
 import com.realestate.dto.PostDto;
 import com.realestate.dto.PostSearchRequest;
-import com.realestate.models.PostsDocument;
-import com.realestate.services.ElasticSearchService;
 import com.realestate.services.MediaService;
 import com.realestate.services.PostService;
 
@@ -27,9 +25,7 @@ import com.realestate.services.PostService;
 @RequestMapping("/api/public")
 public class PublicController {
     @Autowired
-    private PostService postService;
-    @Autowired
-    private ElasticSearchService elasticSearchService;
+    private PostService postService;    
     @Autowired
     private MediaService mediaService;
 
@@ -50,12 +46,16 @@ public class PublicController {
     }
 
     @PostMapping("/search-post")
-    public ResponseEntity<Page<PostsDocument>> searchPosts(
+    public ResponseEntity<Page<PostDto>> searchPosts(
             @RequestBody PostSearchRequest searchRequest,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
-        Page<PostsDocument> results = elasticSearchService.fullTextSearch(searchRequest, page, size);
-        return ResponseEntity.ok(results);
+            try{
+                Page<PostDto> results = postService.searchPosts(searchRequest, page, size);
+                return ResponseEntity.ok(results);
+            }catch(Exception e){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            }        
     }
 
     @GetMapping(value = "/image/{fileName}")

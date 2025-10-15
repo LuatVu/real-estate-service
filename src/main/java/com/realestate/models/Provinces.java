@@ -52,4 +52,7 @@ public class Provinces {
 
     @Column(name = "order")
     private Integer order;
+
+    @Column(name = "image")
+    private String image;
 }

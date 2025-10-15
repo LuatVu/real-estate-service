@@ -19,4 +19,5 @@ public class ProvinceDto {
     private String fullName;
     private String fullNameEn;
     private String codeName;
+    private String image;
 }

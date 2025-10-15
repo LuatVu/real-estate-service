@@ -26,6 +26,7 @@ public class ProvinceServiceImpl implements ProvinceService {
                             .nameEn(province.getNameEn())
                             .fullName(province.getFullName())
                             .fullNameEn(province.getFullNameEn())
+                            .image(province.getImage())
                             .build();
                     return dto;
                 })

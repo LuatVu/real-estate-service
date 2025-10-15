@@ -1,29 +1,5 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet author="Admin (generated)" id="1760504093715-1">
-        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="images_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-2">
-        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="packages_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-3">
-        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="permissions_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-4">
-        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="posts_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-5">
-        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="ranking_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-6">
-        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="roles_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-7">
-        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="user_balances_seq" startValue="1"/>
-    </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-8">
-        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="uuid2" startValue="1"/>
-    </changeSet>
     <changeSet author="Admin (generated)" id="1760504093715-9">
         <createTable tableName="administrative_units">
             <column name="id" type="INT">
@@ -108,8 +84,8 @@
             <column defaultValueComputed="NULL" name="acreage" type="DECIMAL(15, 2)"/>
             <column defaultValueComputed="NULL" name="bedrooms" type="INT"/>
             <column defaultValueComputed="NULL" name="bathrooms" type="INT"/>
-            <column defaultValue="null" name="furniture" type="ENUM('DAY_DU', 'CO_BAN', 'KHONG_NOI_THAT')"/>
-            <column defaultValue="null" name="legal" type="ENUM('SO_DO', 'HOP_DONG_MUA_BAN', 'KHONG_SO')"/>
+            <column  name="furniture" type="ENUM('DAY_DU', 'CO_BAN', 'KHONG_NOI_THAT')"/>
+            <column  name="legal" type="ENUM('SO_DO', 'HOP_DONG_MUA_BAN', 'KHONG_SO')"/>
             <column defaultValueComputed="NULL" name="price" type="DECIMAL(15, 2)"/>
             <column name="province_code" type="VARCHAR(20)"/>
             <column name="district_code" type="VARCHAR(20)"/>
@@ -122,8 +98,8 @@
             </column>
             <column defaultValue="DRAFT" name="status" type="ENUM('DRAFT', 'PUBLISHED', 'EXPIRED', 'DELETED')"/>
             <column defaultValueComputed="NULL" name="floors" type="INT"/>
-            <column defaultValue="null" name="direction" type="ENUM('DONG', 'TAY', 'NAM', 'BAC', 'DONG_BAC', 'TAY_BAC', 'DONG_NAM', 'TAY_NAM')"/>
-            <column defaultValue="null" name="type" type="ENUM('CHCC', 'NHA_RIENG', 'BIET_THU', 'NHA_PHO', 'DAT_NEN', 'CONDOTEL', 'KHO_NHA_XUONG', 'BDS_KHAC')"/>
+            <column  name="direction" type="ENUM('DONG', 'TAY', 'NAM', 'BAC', 'DONG_BAC', 'TAY_BAC', 'DONG_NAM', 'TAY_NAM')"/>
+            <column  name="type" type="ENUM('CHCC', 'NHA_RIENG', 'BIET_THU', 'NHA_PHO', 'DAT_NEN', 'CONDOTEL', 'KHO_NHA_XUONG', 'BDS_KHAC')"/>
             <column defaultValueComputed="NULL" name="frontage" type="INT"/>
             <column defaultValue="SELL" name="transaction_type" type="ENUM('SELL', 'RENT')"/>
         </createTable>

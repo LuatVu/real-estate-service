@@ -32,7 +32,7 @@ public interface PostRepository extends JpaRepository<Posts, String>{
            "(:maxPrice IS NULL OR p.price <= :maxPrice) AND " +
            "(:minAcreage IS NULL OR p.acreage >= :minAcreage) AND " +
            "(:maxAcreage IS NULL OR p.acreage <= :maxAcreage) AND " +
-           "(:isTypeCodesEmpty = true OR p.type IN :typeCodes) AND " +
+           "(:isTypeCodesEmpty = true OR CAST(p.type AS string) IN :typeCodes) AND " +
            "(:cityCode IS NULL OR :cityCode = '' OR p.provinceCode = :cityCode) AND " +           
            "(:isWardCodesEmpty = true OR p.wardCode IN :wardCodes) AND " +
            "(p.status = 'PUBLISHED') " +

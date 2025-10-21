@@ -35,6 +35,7 @@ public interface PostRepository extends JpaRepository<Posts, String>{
            "(:isTypeCodesEmpty = true OR CAST(p.type AS string) IN :typeCodes) AND " +
            "(:cityCode IS NULL OR :cityCode = '' OR p.provinceCode = :cityCode) AND " +           
            "(:isWardCodesEmpty = true OR p.wardCode IN :wardCodes) AND " +
+           "(:transactionType IS NULL OR p.transactionType = :transactionType) AND " +
            "(p.status = 'PUBLISHED') " +
            "ORDER BY " +
            "CASE r.priorityLevel " +
@@ -54,6 +55,7 @@ public interface PostRepository extends JpaRepository<Posts, String>{
                            @Param("cityCode") String cityCode,                           
                            @Param("wardCodes") List<String> wardCodes,
                            @Param("isWardCodesEmpty") boolean isWardCodesEmpty,
+                           @Param("transactionType") TransactionType transactionType,
                            Pageable pageable);
 
 }

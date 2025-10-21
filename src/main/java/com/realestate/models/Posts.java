@@ -158,7 +158,7 @@ public class Posts implements Serializable{
     }
 
     public enum TransactionType{
-        SELL, RENT
+        SELL, RENT, PROJECT
     }
 
     public enum LegalType {

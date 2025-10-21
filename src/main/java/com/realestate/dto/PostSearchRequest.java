@@ -17,4 +17,5 @@ public class PostSearchRequest {
     private List<String> typeCodes;
     private String cityCode;    
     private List<String> wardCodes;
+    private String transactionType;
 }

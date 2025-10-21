@@ -268,6 +268,7 @@ public class PostServiceImpl implements PostService{
             request.getCityCode(),            
             wardCodes,
             isWardCodesEmpty,
+            EnumUtils.fromString(TransactionType.class, request.getTransactionType() != null ? request.getTransactionType() : "SELL"),
             pageable
         );
         

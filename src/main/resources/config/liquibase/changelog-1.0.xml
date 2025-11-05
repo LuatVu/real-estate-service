@@ -1,6 +1,30 @@
 <?xml version="1.1" encoding="UTF-8" standalone="no"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:pro="http://www.liquibase.org/xml/ns/pro" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/pro http://www.liquibase.org/xml/ns/pro/liquibase-pro-latest.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-    <changeSet author="Admin (generated)" id="1760504093715-9">
+    <changeSet author="Admin (generated)" id="1762357397898-1">
+        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="images_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="Admin (generated)" id="1762357397898-2">
+        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="packages_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="Admin (generated)" id="1762357397898-3">
+        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="permissions_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="Admin (generated)" id="1762357397898-4">
+        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="posts_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="Admin (generated)" id="1762357397898-5">
+        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="ranking_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="Admin (generated)" id="1762357397898-6">
+        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="roles_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="Admin (generated)" id="1762357397898-7">
+        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="user_balances_seq" startValue="1"/>
+    </changeSet>
+    <changeSet author="Admin (generated)" id="1762357397898-8">
+        <createSequence cycle="false" incrementBy="50" maxValue="9223372036854775806" minValue="1" sequenceName="uuid2" startValue="1"/>
+    </changeSet>
+    <changeSet author="Admin (generated)" id="1762357397898-9">
         <createTable tableName="administrative_units">
             <column name="id" type="INT">
                 <constraints nullable="false" primaryKey="true"/>
@@ -13,7 +37,7 @@
             <column name="code_name_en" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-10">
+    <changeSet author="Admin (generated)" id="1762357397898-10">
         <createTable tableName="images">
             <column defaultValue="uuid()" name="image_id" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -31,7 +55,7 @@
             <column defaultValueComputed="current_timestamp()" name="upload_date" type="timestamp"/>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-11">
+    <changeSet author="Admin (generated)" id="1762357397898-11">
         <createTable tableName="packages">
             <column defaultValue="uuid()" name="package_id" type="VARCHAR(50)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -60,7 +84,7 @@
             <column defaultValueNumeric="1" name="status" type="INT"/>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-12">
+    <changeSet author="Admin (generated)" id="1762357397898-12">
         <createTable tableName="permissions">
             <column defaultValue="uuid()" name="permission_id" type="VARCHAR(50)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -71,7 +95,7 @@
             <column name="description" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-13">
+    <changeSet author="Admin (generated)" id="1762357397898-13">
         <createTable tableName="posts">
             <column defaultValue="uuid()" name="post_id" type="VARCHAR(50)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -84,8 +108,8 @@
             <column defaultValueComputed="NULL" name="acreage" type="DECIMAL(15, 2)"/>
             <column defaultValueComputed="NULL" name="bedrooms" type="INT"/>
             <column defaultValueComputed="NULL" name="bathrooms" type="INT"/>
-            <column  name="furniture" type="ENUM('DAY_DU', 'CO_BAN', 'KHONG_NOI_THAT')"/>
-            <column  name="legal" type="ENUM('SO_DO', 'HOP_DONG_MUA_BAN', 'KHONG_SO')"/>
+            <column defaultValue="null" name="furniture" type="ENUM('DAY_DU', 'CO_BAN', 'KHONG_NOI_THAT')"/>
+            <column defaultValue="null" name="legal" type="ENUM('SO_DO', 'HOP_DONG_MUA_BAN', 'KHONG_SO')"/>
             <column defaultValueComputed="NULL" name="price" type="DECIMAL(15, 2)"/>
             <column name="province_code" type="VARCHAR(20)"/>
             <column name="district_code" type="VARCHAR(20)"/>
@@ -98,13 +122,13 @@
             </column>
             <column defaultValue="DRAFT" name="status" type="ENUM('DRAFT', 'PUBLISHED', 'EXPIRED', 'DELETED')"/>
             <column defaultValueComputed="NULL" name="floors" type="INT"/>
-            <column  name="direction" type="ENUM('DONG', 'TAY', 'NAM', 'BAC', 'DONG_BAC', 'TAY_BAC', 'DONG_NAM', 'TAY_NAM')"/>
-            <column  name="type" type="ENUM('CHCC', 'NHA_RIENG', 'BIET_THU', 'NHA_PHO', 'DAT_NEN', 'CONDOTEL', 'KHO_NHA_XUONG', 'BDS_KHAC')"/>
+            <column defaultValue="null" name="direction" type="ENUM('DONG', 'TAY', 'NAM', 'BAC', 'DONG_BAC', 'TAY_BAC', 'DONG_NAM', 'TAY_NAM')"/>
+            <column defaultValue="null" name="type" type="ENUM('CHCC', 'NHA_RIENG', 'BIET_THU', 'NHA_PHO', 'DAT_NEN', 'CONDOTEL', 'KHO_NHA_XUONG', 'BDS_KHAC')"/>
             <column defaultValueComputed="NULL" name="frontage" type="INT"/>
-            <column defaultValue="SELL" name="transaction_type" type="ENUM('SELL', 'RENT')"/>
+            <column defaultValue="SELL" name="transaction_type" type="ENUM('SELL', 'RENT', 'PROJECT')"/>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-14">
+    <changeSet author="Admin (generated)" id="1762357397898-14">
         <createTable tableName="provinces">
             <column name="code" type="VARCHAR(20)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -123,7 +147,7 @@
             <column name="image" type="VARCHAR(50)"/>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-15">
+    <changeSet author="Admin (generated)" id="1762357397898-15">
         <createTable tableName="ranking">
             <column name="ranking_id" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -137,7 +161,7 @@
             <column defaultValueComputed="current_timestamp()" name="bump_time" type="timestamp"/>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-16">
+    <changeSet author="Admin (generated)" id="1762357397898-16">
         <createTable tableName="role_permissions">
             <column defaultValue="uuid()" name="role_id" type="VARCHAR(50)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -147,7 +171,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-17">
+    <changeSet author="Admin (generated)" id="1762357397898-17">
         <createTable tableName="roles">
             <column defaultValue="uuid()" name="role_id" type="VARCHAR(50)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -157,7 +181,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-18">
+    <changeSet author="Admin (generated)" id="1762357397898-18">
         <createTable tableName="social_auth">
             <column defaultValue="uuid()" name="auth_id" type="VARCHAR(50)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -171,7 +195,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-19">
+    <changeSet author="Admin (generated)" id="1762357397898-19">
         <createTable tableName="transactions">
             <column defaultValue="uuid()" name="transaction_id" type="VARCHAR(50)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -187,7 +211,7 @@
             <column defaultValueComputed="current_timestamp()" name="created_at" type="timestamp"/>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-20">
+    <changeSet author="Admin (generated)" id="1762357397898-20">
         <createTable tableName="user_balances">
             <column name="balance_id" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -203,7 +227,7 @@
             <column defaultValueComputed="current_timestamp() on update current_timestamp()" name="updated_date" type="timestamp"/>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-21">
+    <changeSet author="Admin (generated)" id="1762357397898-21">
         <createTable tableName="user_packages">
             <column defaultValue="uuid()" name="user_package_id" type="VARCHAR(50)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -230,7 +254,7 @@
             <column defaultValueComputed="current_timestamp()" name="expired_date" type="timestamp"/>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-22">
+    <changeSet author="Admin (generated)" id="1762357397898-22">
         <createTable tableName="user_roles">
             <column defaultValue="uuid()" name="user_id" type="VARCHAR(50)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -240,7 +264,7 @@
             </column>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-23">
+    <changeSet author="Admin (generated)" id="1762357397898-23">
         <createTable tableName="users">
             <column defaultValue="uuid()" name="user_id" type="VARCHAR(50)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -271,7 +295,7 @@
             <column name="profile_picture" type="VARCHAR(255)"/>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-24">
+    <changeSet author="Admin (generated)" id="1762357397898-24">
         <createTable tableName="wards">
             <column name="code" type="VARCHAR(20)">
                 <constraints nullable="false" primaryKey="true"/>
@@ -287,117 +311,117 @@
             <column defaultValueComputed="NULL" name="administrative_unit_id" type="INT"/>
         </createTable>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-25">
+    <changeSet author="Admin (generated)" id="1762357397898-25">
         <addUniqueConstraint columnNames="provider, provider_user_id" constraintName="unique_provider_user" tableName="social_auth"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-26">
+    <changeSet author="Admin (generated)" id="1762357397898-26">
         <createIndex associatedWith="" indexName="FKamf4ragc34vb3il9wxrwjxw7b" tableName="user_packages">
             <column name="package_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-27">
+    <changeSet author="Admin (generated)" id="1762357397898-27">
         <createIndex associatedWith="" indexName="idx_images_post_id" tableName="images">
             <column name="post_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-28">
+    <changeSet author="Admin (generated)" id="1762357397898-28">
         <createIndex associatedWith="" indexName="idx_posts_user_id" tableName="posts">
             <column name="user_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-29">
+    <changeSet author="Admin (generated)" id="1762357397898-29">
         <createIndex associatedWith="" indexName="idx_provinces_unit" tableName="provinces">
             <column defaultValueComputed="NULL" name="administrative_unit_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-30">
+    <changeSet author="Admin (generated)" id="1762357397898-30">
         <createIndex associatedWith="" indexName="idx_wards_province" tableName="wards">
             <column name="province_code"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-31">
+    <changeSet author="Admin (generated)" id="1762357397898-31">
         <createIndex associatedWith="" indexName="idx_wards_unit" tableName="wards">
             <column defaultValueComputed="NULL" name="administrative_unit_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-32">
+    <changeSet author="Admin (generated)" id="1762357397898-32">
         <createIndex associatedWith="" indexName="permission_id" tableName="role_permissions">
             <column name="permission_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-33">
+    <changeSet author="Admin (generated)" id="1762357397898-33">
         <createIndex associatedWith="" indexName="post_id" tableName="ranking">
             <column name="post_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-34">
+    <changeSet author="Admin (generated)" id="1762357397898-34">
         <createIndex associatedWith="" indexName="role_id" tableName="user_roles">
             <column name="role_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-35">
+    <changeSet author="Admin (generated)" id="1762357397898-35">
         <createIndex associatedWith="" indexName="user_id" tableName="social_auth">
             <column name="user_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-36">
+    <changeSet author="Admin (generated)" id="1762357397898-36">
         <createIndex associatedWith="" indexName="user_id" tableName="transactions">
             <column name="user_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-37">
+    <changeSet author="Admin (generated)" id="1762357397898-37">
         <createIndex associatedWith="" indexName="user_id" tableName="user_balances">
             <column name="user_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-38">
+    <changeSet author="Admin (generated)" id="1762357397898-38">
         <createIndex associatedWith="" indexName="user_packages_fk1" tableName="user_packages">
             <column name="user_id"/>
         </createIndex>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-39">
+    <changeSet author="Admin (generated)" id="1762357397898-39">
         <addForeignKeyConstraint baseColumnNames="package_id" baseTableName="user_packages" constraintName="FKamf4ragc34vb3il9wxrwjxw7b" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="package_id" referencedTableName="packages" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-40">
+    <changeSet author="Admin (generated)" id="1762357397898-40">
         <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="images" constraintName="images_ibfk_1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="post_id" referencedTableName="posts" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-41">
+    <changeSet author="Admin (generated)" id="1762357397898-41">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="posts" constraintName="posts_ibfk_1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-42">
+    <changeSet author="Admin (generated)" id="1762357397898-42">
         <addForeignKeyConstraint baseColumnNames="administrative_unit_id" baseTableName="provinces" constraintName="provinces_administrative_unit_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="administrative_units" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-43">
+    <changeSet author="Admin (generated)" id="1762357397898-43">
         <addForeignKeyConstraint baseColumnNames="post_id" baseTableName="ranking" constraintName="ranking_ibfk_1" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="RESTRICT" referencedColumnNames="post_id" referencedTableName="posts" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-44">
+    <changeSet author="Admin (generated)" id="1762357397898-44">
         <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="role_permissions" constraintName="role_permissions_ibfk_1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="role_id" referencedTableName="roles" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-45">
+    <changeSet author="Admin (generated)" id="1762357397898-45">
         <addForeignKeyConstraint baseColumnNames="permission_id" baseTableName="role_permissions" constraintName="role_permissions_ibfk_2" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="permission_id" referencedTableName="permissions" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-46">
+    <changeSet author="Admin (generated)" id="1762357397898-46">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="social_auth" constraintName="social_auth_ibfk_1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-47">
+    <changeSet author="Admin (generated)" id="1762357397898-47">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="transactions" constraintName="transactions_ibfk_1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-48">
+    <changeSet author="Admin (generated)" id="1762357397898-48">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_balances" constraintName="user_balances_ibfk_1" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="RESTRICT" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-49">
+    <changeSet author="Admin (generated)" id="1762357397898-49">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_packages" constraintName="user_packages_fk1" deferrable="false" initiallyDeferred="false" onDelete="CASCADE" onUpdate="RESTRICT" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-50">
+    <changeSet author="Admin (generated)" id="1762357397898-50">
         <addForeignKeyConstraint baseColumnNames="user_id" baseTableName="user_roles" constraintName="user_roles_ibfk_1" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="user_id" referencedTableName="users" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-51">
+    <changeSet author="Admin (generated)" id="1762357397898-51">
         <addForeignKeyConstraint baseColumnNames="role_id" baseTableName="user_roles" constraintName="user_roles_ibfk_2" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="role_id" referencedTableName="roles" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-52">
+    <changeSet author="Admin (generated)" id="1762357397898-52">
         <addForeignKeyConstraint baseColumnNames="administrative_unit_id" baseTableName="wards" constraintName="wards_administrative_unit_id_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="id" referencedTableName="administrative_units" validate="true"/>
     </changeSet>
-    <changeSet author="Admin (generated)" id="1760504093715-53">
+    <changeSet author="Admin (generated)" id="1762357397898-53">
         <addForeignKeyConstraint baseColumnNames="province_code" baseTableName="wards" constraintName="wards_province_code_fkey" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="code" referencedTableName="provinces" validate="true"/>
     </changeSet>
 </databaseChangeLog>

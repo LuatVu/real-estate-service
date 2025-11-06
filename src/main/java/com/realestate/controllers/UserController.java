@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 
+
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
@@ -62,6 +63,20 @@ public class UserController {
                 .body(ApiResponseDto.builder()
                         .status(String.valueOf(HttpStatus.OK))
                         .build());
+    }
+    
+
+    @GetMapping("/balances/{userId}")
+    public ResponseEntity<ApiResponseDto<?>> getUserBalances(@PathVariable String userId) {
+        try{
+            return ResponseEntity.ok()
+                    .body(ApiResponseDto.builder()
+                            .status(String.valueOf(HttpStatus.OK))
+                            .response(userService.getUserBalances(userId))
+                            .build());
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }        
     }
     
 }

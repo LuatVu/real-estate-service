@@ -1,6 +1,8 @@
 package com.realestate.services;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import java.util.Optional;
@@ -10,15 +12,21 @@ import org.springframework.stereotype.Service;
 import com.realestate.dto.ChangePasswordDto;
 import com.realestate.models.Role;
 import com.realestate.models.User;
+import com.realestate.models.UserBalances;
 import com.realestate.repositories.UserRepository;
+import com.realestate.repositories.UserBalancesRepository;
 
 import jakarta.transaction.Transactional;
 
 import com.realestate.dto.UserDto;
+import com.realestate.dto.UserBalancesDTO;
 
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+
+    @Autowired
+    private UserBalancesRepository userBalancesRepository;
 
     @Autowired
     private RoleFactory roleFactory;
@@ -197,4 +205,31 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public UserBalancesDTO getUserBalances(String userId) {
+        List<UserBalances> userBalancesList = userBalancesRepository.findByUserId(userId);
+        if (!userBalancesList.isEmpty()) {
+
+            Double mainBalance = 0.0;
+            Double promoBalance = 0.0;
+            LocalDateTime mainBalExpiredDate = null;
+            LocalDateTime promoBalExpiredDate = null;
+            for (UserBalances userBalances : userBalancesList) {
+                if(userBalances.getBalanceType() == UserBalances.BalanceType.MAIN) {
+                    mainBalance += userBalances.getBalance();
+                    mainBalExpiredDate = userBalances.getExpiredDate();
+                } else if(userBalances.getBalanceType() == UserBalances.BalanceType.PROMO) {
+                    promoBalance += userBalances.getBalance();
+                    promoBalExpiredDate = userBalances.getExpiredDate();
+                }
+            }
+            return UserBalancesDTO.builder()
+                    .mainBalance(mainBalance)
+                    .promoBalance(promoBalance)
+                    .mainBalanceExpiredDate(mainBalExpiredDate)
+                    .promoBalanceExpiredDate(promoBalExpiredDate)
+                    .build();
+        }
+        return null;
+    }
 }

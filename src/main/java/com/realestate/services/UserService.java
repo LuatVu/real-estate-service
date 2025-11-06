@@ -3,6 +3,7 @@ package com.realestate.services;
 import com.realestate.dto.UserDto;
 import com.realestate.models.User;
 import com.realestate.dto.ChangePasswordDto;
+import com.realestate.dto.UserBalancesDTO;
 
 public interface UserService {
     boolean existByUsername(String username);
@@ -13,4 +14,5 @@ public interface UserService {
     UserDto getUserById(String userId);
     void updateUser(UserDto userDto) throws Exception;
     void changePassword(ChangePasswordDto changePasswordDto) throws Exception;
+    UserBalancesDTO getUserBalances(String userId);
 }

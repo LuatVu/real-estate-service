@@ -54,6 +54,12 @@ public class Packages implements Serializable{
     @Column(name = "status", columnDefinition = "int default 1")
     private Integer status;
 
+    @Column(name = "order", nullable = true)
+    private Integer order;
+
+    @Column(name="image", nullable = true)
+    private String image;
+
     @PrePersist
     protected void onCreate() {
         createdDate = LocalDateTime.now();

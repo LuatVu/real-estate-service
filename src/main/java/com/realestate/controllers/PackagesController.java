@@ -32,4 +32,18 @@ public class PackagesController {
         
     }
     
+    @GetMapping("all")
+    public ResponseEntity<ApiResponseDto<?>> getAllPackages() {
+        try{
+            return ResponseEntity.ok()
+                .body(ApiResponseDto.builder()
+                        .status(String.valueOf(HttpStatus.OK))
+                        .response(packagesService.getAllPackages())
+                        .build());
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    
+    
 }

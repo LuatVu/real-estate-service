@@ -4,14 +4,18 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.realestate.dto.UserPackagesDTO;
+import com.realestate.dto.PackagesDTO;
 import com.realestate.repositories.UserPackagesRepository;
+import com.realestate.repositories.PackagesRepository;
 
 @Service
 public class PackagesServiceImpl implements PackagesService {
     private final UserPackagesRepository userPackagesRepository;
+    private final PackagesRepository packagesRepository;
 
-    public PackagesServiceImpl(UserPackagesRepository userPackagesRepository) {
+    public PackagesServiceImpl(UserPackagesRepository userPackagesRepository, PackagesRepository packagesRepository) {
         this.userPackagesRepository = userPackagesRepository;
+        this.packagesRepository = packagesRepository;
     }
 
     @Override
@@ -33,5 +37,24 @@ public class PackagesServiceImpl implements PackagesService {
                 .status(userPackage.getStatus().name())
                 .image(userPackage.getPackages().getImage())
                 .build()).collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PackagesDTO> getAllPackages() {
+        return packagesRepository.findAllActivePackages().stream()
+                .map(packageEntity -> PackagesDTO.builder()
+                        .packageId(packageEntity.getPackageId())
+                        .packageName(packageEntity.getPackageName())
+                        .packageDescription(packageEntity.getDescription())
+                        .diamondPosts(packageEntity.getMaxDiamondPosts())
+                        .goldPosts(packageEntity.getMaxGoldPosts())
+                        .silverPosts(packageEntity.getMaxSilverPosts())
+                        .normalPosts(packageEntity.getMaxNormalPosts())
+                        .price(packageEntity.getPrice().doubleValue())
+                        .createdDate(packageEntity.getCreatedDate())
+                        .updatedDate(packageEntity.getUpdatedDate())
+                        .image(packageEntity.getImage())
+                        .build())
+                .collect(Collectors.toList());
     }
 }

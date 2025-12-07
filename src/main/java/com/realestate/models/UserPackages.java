@@ -11,6 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -59,14 +60,16 @@ public class UserPackages implements Serializable {
     private Integer remainingNormalPosts;
 
     @Column(name = "active_date")
-    private LocalDateTime activeDate;
+    @Default
+    private LocalDateTime activeDate = LocalDateTime.now();
 
     @Column(name = "expired_date")
     private LocalDateTime expiredDate;
 
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
-    private Status status;
+    @Default
+    private Status status = Status.ACTIVE;
 
     public enum Status {
         ACTIVE,

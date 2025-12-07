@@ -19,6 +19,7 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder.Default;
 @Data
 @Entity
 @Getter
@@ -56,7 +57,8 @@ public class UserBalances {
 
     @Enumerated(EnumType.STRING)
     @Column(name="status")
-    private Status status;
+    @Default
+    private Status status = Status.ACTIVE;
 
     public enum BalanceType {
         MAIN,

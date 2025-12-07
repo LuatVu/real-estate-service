@@ -33,6 +33,9 @@ public class Packages implements Serializable{
     @Column(name = "price", nullable = false, precision = 15, scale = 2)
     private BigDecimal price;
 
+    @Column(name="discount", nullable = false, precision = 15, scale = 4)
+    private BigDecimal discount;
+
     @Column(name = "max_diamond_posts", nullable = false)
     private Integer maxDiamondPosts;
 

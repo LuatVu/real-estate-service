@@ -22,6 +22,7 @@ public class PackagesDTO implements Serializable {
     private Integer silverPosts;
     private Integer normalPosts;
     private Double price;
+    private Double discount;
     private LocalDateTime createdDate;
     private LocalDateTime updatedDate;
     private String image;

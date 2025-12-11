@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-
+import java.util.List;
 import java.util.Set;
 
 
@@ -90,6 +90,11 @@ public class User implements Serializable{
         inverseJoinColumns= @JoinColumn(name = "package_id")
     )
     private Set<Packages> packages;
+
+    // One-to-Many relationship with UserBalances
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private List<UserBalances> userBalances;
 
     @Column(name = "google_id", length = 100, unique = true)
     private String googleId;

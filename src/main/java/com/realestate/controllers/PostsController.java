@@ -12,6 +12,8 @@ import com.realestate.dto.ApiResponseDto;
 import com.realestate.dto.PostDto;
 import com.realestate.models.Posts;
 import com.realestate.services.PostService;
+
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -40,4 +42,33 @@ public class PostsController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }    
+
+    @PostMapping("/reup/{postId}")
+    public ResponseEntity<ApiResponseDto<?>> reupPost(@PathVariable String postId) {
+        try{
+            postService.reupPost(postId);
+            return ResponseEntity.ok(ApiResponseDto.builder()
+                    .status(String.valueOf(HttpStatus.OK))
+                    .message("Reup post successfully!")
+                    .build());
+        }catch(Exception e){
+            ApiResponseDto<?> response = new ApiResponseDto<>("500", "Internal Server Error: " + e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+    
+    @PostMapping("/renew/{postId}")
+    public ResponseEntity<ApiResponseDto<?>> renewPost(@PathVariable String postId) {
+        try{
+            postService.renewPost(postId);
+            return ResponseEntity.ok(ApiResponseDto.builder()
+                    .status(String.valueOf(HttpStatus.OK))
+                    .message("Renew post successfully!")
+                    .build());
+        }catch(Exception e){
+            ApiResponseDto<?> response = new ApiResponseDto<>("500", "Internal Server Error: " + e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
+
 }

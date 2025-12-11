@@ -3,6 +3,7 @@ package com.realestate.services;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,7 @@ import com.realestate.models.Posts;
 import com.realestate.models.Posts.TransactionType;
 import com.realestate.models.Ranking;
 import com.realestate.models.User;
+import com.realestate.models.UserBalances;
 import com.realestate.models.Posts.Direction;
 import com.realestate.models.Posts.FurnitureType;
 import com.realestate.models.Posts.LegalType;
@@ -29,10 +31,13 @@ import com.realestate.models.Ranking.PriorityLevel;
 import com.realestate.repositories.ImageRepository;
 import com.realestate.repositories.PostRepository;
 import com.realestate.repositories.RankingRepository;
+import com.realestate.repositories.PostChargeFeesRepository;
+import com.realestate.repositories.UserBalancesRepository;
 import com.realestate.repositories.UserRepository;
 import com.realestate.utilities.EnumUtils;
 
 import jakarta.transaction.Transactional;
+import com.realestate.models.PostChargeFees;
 
 @Service
 public class PostServiceImpl implements PostService{
@@ -47,6 +52,12 @@ public class PostServiceImpl implements PostService{
 
     @Autowired
     private RankingRepository rankingRepository;
+
+    @Autowired
+    private PostChargeFeesRepository postChargeFeesRepo;
+
+    @Autowired
+    private UserBalancesRepository userBalancesRepository;
 
     @Transactional
     public Posts createPost(PostDto postDto) throws Exception{
@@ -335,4 +346,133 @@ public class PostServiceImpl implements PostService{
         
         return new PageImpl<>(postDtos, pageable, postsPage.getTotalElements());
     }
+
+    @Transactional
+    public void reupPost(String postId) throws Exception{
+        Optional<Ranking> rankingOpt = rankingRepository.findByPostId(postId);
+        if(rankingOpt.isPresent()){
+            Ranking ranking = rankingOpt.get();
+            Posts post = ranking.getPost();
+            List<UserBalances> userBalances = post.getUser().getUserBalances();
+            
+            // Check if userBalances is null or empty
+            if (userBalances == null || userBalances.isEmpty()) {
+                throw new Exception("User has no balance records.");
+            }
+            
+            // Filter out null balances and sort: PROMO first, MAIN last
+            userBalances = userBalances.stream()
+                .filter(balance -> balance != null && balance.getBalanceType() != null && balance.getBalance() != null)
+                .sorted(Comparator.comparing(UserBalances::getBalanceType, 
+                    (type1, type2) -> {
+                        if (type1 == UserBalances.BalanceType.PROMO && type2 == UserBalances.BalanceType.MAIN) return -1;
+                        if (type1 == UserBalances.BalanceType.MAIN && type2 == UserBalances.BalanceType.PROMO) return 1;
+                        return 0;
+                    }))
+                .collect(java.util.stream.Collectors.toList());
+                
+            Double totalBalance = userBalances.stream()
+                                        .mapToDouble(UserBalances::getBalance)
+                                        .sum();
+            Optional<PostChargeFees> reupFee = postChargeFeesRepo.findByPriorityLevel(ranking.getPriorityLevel());
+            if(reupFee.isPresent()){
+                Double fee = reupFee.get().getReupFee().doubleValue();
+                if(totalBalance >= fee){
+                    // Deduct balance from user's balances
+                    Double remainingFee = fee;
+                    for(UserBalances balance : userBalances){
+                        if(remainingFee <= 0) break;
+                        if(balance.getBalance() >= remainingFee){
+                            balance.setBalance(balance.getBalance() - remainingFee);
+                            remainingFee = 0.0;
+                        }else{
+                            remainingFee -= balance.getBalance();
+                            balance.setBalance(0.0);
+                        }
+                        // Save updated balance
+                        userBalancesRepository.save(balance);
+                    }
+                    // Update bump time
+                    ranking.setBumpTime(LocalDateTime.now());
+                    rankingRepository.save(ranking);
+                }else{
+                    throw new Exception("Insufficient balance to reup the post.");
+                }
+            }else{
+                throw new Exception("Reup fee not found for priority level: " + ranking.getPriorityLevel());
+            }
+        }else{
+            throw new Exception("Post not found with ID: " + postId);
+        }
+    }
+
+    @Transactional
+    public void renewPost(String postId) throws Exception{
+        Optional<Ranking> rankingOpt = rankingRepository.findByPostId(postId);
+        if(rankingOpt.isPresent()){
+            Ranking ranking = rankingOpt.get();
+            Posts post = ranking.getPost();
+            if(post.getStatus() != PostStatus.EXPIRED){
+                throw new Exception("Only expired posts can be renewed.");
+
+            }
+
+            List<UserBalances> userBalances = post.getUser().getUserBalances();
+            
+            // Check if userBalances is null or empty
+            if (userBalances == null || userBalances.isEmpty()) {
+                throw new Exception("User has no balance records.");
+            }
+            
+            // Filter out null balances and sort: PROMO first, MAIN last
+            userBalances = userBalances.stream()
+                .filter(balance -> balance != null && balance.getBalanceType() != null && balance.getBalance() != null)
+                .sorted(Comparator.comparing(UserBalances::getBalanceType, 
+                    (type1, type2) -> {
+                        if (type1 == UserBalances.BalanceType.PROMO && type2 == UserBalances.BalanceType.MAIN) return -1;
+                        if (type1 == UserBalances.BalanceType.MAIN && type2 == UserBalances.BalanceType.PROMO) return 1;
+                        return 0;
+                    }))
+                .collect(java.util.stream.Collectors.toList());
+                
+            Double totalBalance = userBalances.stream()
+                                        .mapToDouble(UserBalances::getBalance)
+                                        .sum();
+            Optional<PostChargeFees> renewFee = postChargeFeesRepo.findByPriorityLevel(ranking.getPriorityLevel());
+            if(renewFee.isPresent()){
+                Double fee = renewFee.get().getRenewFee().doubleValue();
+                if(totalBalance >= fee){
+                    // Deduct balance from user's balances
+                    Double remainingFee = fee;
+                    for(UserBalances balance : userBalances){
+                        if(remainingFee <= 0) break;
+                        if(balance.getBalance() >= remainingFee){
+                            balance.setBalance(balance.getBalance() - remainingFee);
+                            remainingFee = 0.0;
+                        }else{
+                            remainingFee -= balance.getBalance();
+                            balance.setBalance(0.0);
+                        }
+                        // Save updated balance
+                        userBalancesRepository.save(balance);
+                    }
+                    // Update bump time
+                    ranking.setBumpTime(LocalDateTime.now());
+                    rankingRepository.save(ranking);
+
+                    // Update expired date
+                    post.setUpdatedDate(LocalDateTime.now().plusDays(30));
+                    post.setExpiredAt(LocalDateTime.now().plusDays(30)); // Set expiration to 30 days from now
+                    post.setStatus(PostStatus.PUBLISHED); // Set status to ACTIVE
+                    postRepository.save(post);
+                }else{
+                    throw new Exception("Insufficient balance to renew the post.");
+                }
+            }else{
+                throw new Exception("Renew fee not found for priority level: " + ranking.getPriorityLevel());
+            }
+        }else{
+            throw new Exception("Post not found with ID: " + postId);
+        }
+    }                
 }

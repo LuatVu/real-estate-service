@@ -15,4 +15,6 @@ public interface PostService {
     List<PostDto> getPost(PostRequest postRequest, String userId) throws Exception;
     void updatePostStatus(String postId, String status) throws Exception;
     Page<PostDto> searchPosts(PostSearchRequest request, int page, int size) throws Exception;
+    void reupPost(String postId) throws Exception;
+    void renewPost(String postId) throws Exception;
 }

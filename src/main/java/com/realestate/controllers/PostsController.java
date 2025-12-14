@@ -45,49 +45,5 @@ public class PostsController {
             ApiResponseDto<?> response = new ApiResponseDto<>("500", "Internal Server Error: " + e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
-    }    
-
-    @PostMapping("/reup/{postId}")
-    public ResponseEntity<ApiResponseDto<?>> reupPost(@PathVariable String postId) {
-        try{
-            postService.reupPost(postId);
-            return ResponseEntity.ok(ApiResponseDto.builder()
-                    .status(String.valueOf(HttpStatus.OK))
-                    .message("Reup post successfully!")
-                    .build());
-        }catch(Exception e){
-            ApiResponseDto<?> response = new ApiResponseDto<>("500", "Internal Server Error: " + e.getMessage(), null);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
     }
-    
-    @PostMapping("/renew/{postId}")
-    public ResponseEntity<ApiResponseDto<?>> renewPost(@PathVariable String postId) {
-        try{
-            postService.renewPost(postId);
-            return ResponseEntity.ok(ApiResponseDto.builder()
-                    .status(String.valueOf(HttpStatus.OK))
-                    .message("Renew post successfully!")
-                    .build());
-        }catch(Exception e){
-            ApiResponseDto<?> response = new ApiResponseDto<>("500", "Internal Server Error: " + e.getMessage(), null);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
-
-    @GetMapping("/charge-fee/{postId}")
-    public ResponseEntity<ApiResponseDto<?>> getMethodName(@PathVariable String postId) {
-        try{
-            PostChargeFeeDto chargeFeeDto = postService.getPostChargeFee(postId);
-            return ResponseEntity.ok(ApiResponseDto.builder()
-                    .status(String.valueOf(HttpStatus.OK))
-                    .response(chargeFeeDto)
-                    .build());
-        }catch(Exception e){
-            ApiResponseDto<?> response = new ApiResponseDto<>("500", "Internal Server Error: " + e.getMessage(), null);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-    }
-    
-
 }

@@ -474,5 +474,28 @@ public class PostServiceImpl implements PostService{
         }else{
             throw new Exception("Post not found with ID: " + postId);
         }
-    }                
+    }
+
+    public com.realestate.dto.PostChargeFeeDto getPostChargeFee(String postId) throws Exception{
+        Optional<Ranking> rankingOpt = rankingRepository.findByPostId(postId);
+        if(rankingOpt.isPresent()){
+            Ranking ranking = rankingOpt.get();
+            Optional<PostChargeFees> chargeFeeOpt = postChargeFeesRepo.findByPriorityLevel(ranking.getPriorityLevel());
+            if(chargeFeeOpt.isPresent()){
+                PostChargeFees chargeFee = chargeFeeOpt.get();
+                com.realestate.dto.PostChargeFeeDto chargeFeeDto = com.realestate.dto.PostChargeFeeDto.builder()
+                                                        .postId(postId)
+                                                        .priorityLevel(ranking.getPriorityLevel().name())
+                                                        .reupFee(chargeFee.getReupFee().doubleValue())
+                                                        .renewFee(chargeFee.getRenewFee().doubleValue())
+                                                        .status(chargeFee.getStatus())
+                                                        .build();
+                return chargeFeeDto;
+            }else{
+                throw new Exception("Charge fee not found for priority level: " + ranking.getPriorityLevel());
+            }
+        }else{
+            throw new Exception("Post not found with ID: " + postId);
+        }
+    }
 }

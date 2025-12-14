@@ -8,6 +8,7 @@ import com.realestate.models.Posts;
 import com.realestate.dto.PostRequest;
 import com.realestate.dto.PostSearchRequest;
 import org.springframework.data.domain.Page;
+import com.realestate.dto.PostChargeFeeDto;
 
 public interface PostService {
     Posts createPost(PostDto post) throws Exception;
@@ -17,4 +18,5 @@ public interface PostService {
     Page<PostDto> searchPosts(PostSearchRequest request, int page, int size) throws Exception;
     void reupPost(String postId) throws Exception;
     void renewPost(String postId) throws Exception;
+    PostChargeFeeDto getPostChargeFee(String postId) throws Exception;
 }

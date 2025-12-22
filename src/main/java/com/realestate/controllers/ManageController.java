@@ -123,4 +123,19 @@ public class ManageController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
+
+    @PostMapping("/posts/edit")
+    public ResponseEntity<ApiResponseDto<?>> editPosts(@RequestBody PostDto data) throws Exception {
+        try{
+            PostDto postJPA = postService.editPost(data);
+            return ResponseEntity.ok(ApiResponseDto.builder()
+                    .status(String.valueOf(HttpStatus.OK))
+                    .message("Edit a post successfully!")
+                    .response(postJPA)
+                    .build());
+        }catch (Exception e){
+            ApiResponseDto<?> response = new ApiResponseDto<>("500", "Internal Server Error: " + e.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 }

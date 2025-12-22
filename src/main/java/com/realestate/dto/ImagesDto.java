@@ -24,4 +24,12 @@ public class ImagesDto implements Serializable{
     private String mimeType;
     private Boolean isPrimary;
     private LocalDateTime uploadDate;
+    private UpdatedType updatedType;
+    private Integer status;
+
+    public enum UpdatedType {
+        ADD,
+        DELETE,
+        UPDATE
+    }
 }

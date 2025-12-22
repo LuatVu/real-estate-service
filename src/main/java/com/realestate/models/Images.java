@@ -55,6 +55,9 @@ public class Images implements Serializable{
     @Column(name = "upload_date")
     private LocalDateTime uploadDate;
 
+    @Column(name = "status", columnDefinition = "int default 1")
+    private Integer status;
+
     @PrePersist
     protected void onCreate() {
         uploadDate = LocalDateTime.now();

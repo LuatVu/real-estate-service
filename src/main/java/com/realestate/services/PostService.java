@@ -12,6 +12,7 @@ import com.realestate.dto.PostChargeFeeDto;
 
 public interface PostService {
     Posts createPost(PostDto post) throws Exception;
+    PostDto editPost(PostDto post) throws Exception;
     PostDto getPost(String postId) throws Exception;
     List<PostDto> getPost(PostRequest postRequest, String userId) throws Exception;
     void updatePostStatus(String postId, String status) throws Exception;

@@ -1,12 +1,9 @@
 package com.realestate.services;
 
-import org.hibernate.ObjectNotFoundException;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 import com.realestate.dto.UserPackagesDTO;
-import com.realestate.models.Posts;
 import com.realestate.models.UserBalances;
 import com.realestate.models.UserPackages;
 import com.realestate.models.UserBalances.BalanceType;

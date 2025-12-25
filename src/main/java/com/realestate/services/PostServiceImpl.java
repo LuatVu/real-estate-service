@@ -1,6 +1,5 @@
 package com.realestate.services;
 
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -496,6 +495,112 @@ public class PostServiceImpl implements PostService{
             }
         }else{
             throw new Exception("Post not found with ID: " + postId);
+        }
+    }
+
+    @Transactional
+    @Override
+    public PostDto editPost(PostDto postDto) throws Exception{
+        // to be implemented
+        if(postDto.getPostId() != null){
+            // Fetch existing post
+            Optional<Posts> postOpt = postRepository.findById(postDto.getPostId());
+            if(postOpt.isPresent()){
+                Posts post = postOpt.get();
+                // Update fields
+                post.setTitle(postDto.getTitle());
+                post.setDescription(postDto.getDescription());
+                post.setAcreage(postDto.getAcreage());
+                post.setBedrooms(postDto.getBedrooms());
+                post.setBathrooms(postDto.getBathrooms());
+                post.setFurniture(EnumUtils.fromString(FurnitureType.class, postDto.getFurniture()));
+                post.setLegal(EnumUtils.fromString(LegalType.class, postDto.getLegal()));
+                post.setPrice(postDto.getPrice());
+                post.setProvinceCode(postDto.getProvinceCode());                
+                post.setWardCode(postDto.getWardCode());
+                post.setAddress(postDto.getAddress());
+                post.setFloors(postDto.getFloors());
+                post.setFrontage(postDto.getFrontage());
+                post.setDirection(EnumUtils.fromString(Direction.class, postDto.getDirection()));
+                post.setType(EnumUtils.fromString(Type.class, postDto.getType()));
+                // Save updated post
+                Posts updatedPost = postRepository.save(post);
+
+                List<ImagesDto> imagesDtos = postDto.getImages();
+                for (ImagesDto imagesDto : imagesDtos) {
+                    try{
+                        if(imagesDto.getUpdatedType() == ImagesDto.UpdatedType.ADD){
+                            // Add new image
+                            Images newImage = Images.builder()
+                                            .fileUrl(imagesDto.getFileUrl())
+                                            .fileName(imagesDto.getFileName())
+                                            .post(updatedPost)
+                                            .isPrimary(imagesDto.getIsPrimary())                
+                                            .build();
+                            imageRepository.save(newImage);
+                        }else if(imagesDto.getUpdatedType() == ImagesDto.UpdatedType.DELETE){
+                            // Delete image
+                            if(imagesDto.getImageId() != null){
+                                imageRepository.updateImageStatus(imagesDto.getImageId(), false);
+                            }
+                        }else if(imagesDto.getUpdatedType() == ImagesDto.UpdatedType.UPDATE){
+                            // Update existing image
+                            Optional <Images> imageOpt = imageRepository.findPrimaryImage(updatedPost.getPostId());
+                            if(imageOpt.isPresent()){
+                                Images imageToUpdate = imageOpt.get();                                
+                                imageToUpdate.setIsPrimary(false);
+                                imageRepository.save(imageToUpdate);
+
+                                Images imageNewPrimary = imageRepository.getReferenceById(imagesDto.getImageId());
+                                imageNewPrimary.setIsPrimary(true);
+                                imageRepository.save(imageNewPrimary);
+                            }
+                        }
+                    }catch(Exception e){
+                        // Log error and continue
+                        System.out.println("Error processing image update: " + e.getMessage());
+                    }                    
+                }                
+                // Convert to PostDto to return
+                List<ImagesDto> imageJPA = updatedPost.getImages().stream().map(img -> ImagesDto.builder()
+                                                        .imageId(img.getImageId())
+                                                        .postId(updatedPost.getPostId())
+                                                        .fileUrl(img.getFileUrl())
+                                                        .fileName(img.getFileName())
+                                                        .isPrimary(img.getIsPrimary())
+                                                        .build()).toList();
+                                                                      
+                PostDto updatedPostDto = PostDto.builder()
+                                        .postId(updatedPost.getPostId())
+                                        .userId(updatedPost.getUser().getUserId())                                
+                                        .title(updatedPost.getTitle())
+                                        .description(updatedPost.getDescription())                                
+                                        .acreage(updatedPost.getAcreage())
+                                        .bedrooms(updatedPost.getBedrooms())
+                                        .bathrooms(updatedPost.getBathrooms())
+                                        .furniture(updatedPost.getFurniture() != null ? updatedPost.getFurniture().getValue() : null)
+                                        .legal(updatedPost.getLegal() != null ? updatedPost.getLegal().getValue() : null)                                
+                                        .price(updatedPost.getPrice())
+                                        .provinceCode(updatedPost.getProvinceCode())
+                                        .districtCode(updatedPost.getDistrictCode())
+                                        .wardCode(updatedPost.getWardCode())
+                                        .address(updatedPost.getAddress())
+                                        .createdDate(updatedPost.getCreatedDate())
+                                        .updatedDate(updatedPost.getUpdatedDate())
+                                        .expiredAt(updatedPost.getExpiredAt())
+                                        .status(updatedPost.getStatus().toString())
+                                        .type(updatedPost.getType() != null ? updatedPost.getType().name() : null)
+                                        .floors(updatedPost.getFloors())
+                                        .frontage(updatedPost.getFrontage())
+                                        .direction(updatedPost.getDirection() != null ? updatedPost.getDirection().name() : null)
+                                        .images(imageJPA)
+                                        .build();
+                return updatedPostDto;
+            }else{
+                throw new Exception("Post not found with ID: " + postDto.getPostId());
+            }
+        }else{
+            throw new Exception("Post ID is required for editing.");
         }
     }
 }

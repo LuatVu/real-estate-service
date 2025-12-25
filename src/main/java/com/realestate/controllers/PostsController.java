@@ -9,16 +9,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.realestate.dao.UserDetailsImpl;
 import com.realestate.dto.ApiResponseDto;
-import com.realestate.dto.PostChargeFeeDto;
 import com.realestate.dto.PostDto;
 import com.realestate.models.Posts;
 import com.realestate.services.PostService;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 
 @RestController
@@ -45,5 +43,20 @@ public class PostsController {
             ApiResponseDto<?> response = new ApiResponseDto<>("500", "Internal Server Error: " + e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
+    }
+
+    @GetMapping("/{postId}")
+    public ResponseEntity<ApiResponseDto<?>> getPost(@PathVariable String postId) throws Exception {
+        PostDto postDto = postService.getPost(postId);
+        if (postDto != null) {
+            return ResponseEntity.ok(ApiResponseDto.builder()
+                    .status(String.valueOf(HttpStatus.OK))
+                    .response(postDto)
+                    .build());
+        }else{
+            ApiResponseDto<?> response = new ApiResponseDto<>("404", "Not Found", null);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
+
     }
 }

@@ -148,6 +148,7 @@ public class PostServiceImpl implements PostService{
                                 .updatedDate(model.getUpdatedDate())
                                 .expiredAt(model.getExpiredAt())
                                 .status(model.getStatus().toString())
+                                .type(model.getType() != null? model.getType().toString(): null)
                                 .floors(model.getFloors())
                                 .direction(model.getDirection() != null ? model.getDirection().name() : null)
                                 .frontage(model.getFrontage())

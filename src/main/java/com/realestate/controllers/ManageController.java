@@ -24,8 +24,11 @@ import com.realestate.models.Posts.PostStatus;
 import com.realestate.services.PostService;
 import com.realestate.utilities.EnumUtils;
 
+import lombok.extern.log4j.Log4j2;
+
 @RestController
 @RequestMapping("/api/manage")
+@Log4j2
 public class ManageController {
     @Autowired
     private PostService postService;
@@ -134,6 +137,7 @@ public class ManageController {
                     .response(postJPA)
                     .build());
         }catch (Exception e){
+            log.error(e.getMessage(), e);
             ApiResponseDto<?> response = new ApiResponseDto<>("500", "Internal Server Error: " + e.getMessage(), null);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }

@@ -36,9 +36,12 @@ import com.realestate.repositories.UserRepository;
 import com.realestate.utilities.EnumUtils;
 
 import jakarta.transaction.Transactional;
+import lombok.extern.log4j.Log4j2;
+
 import com.realestate.models.PostChargeFees;
 
 @Service
+@Log4j2
 public class PostServiceImpl implements PostService{
     @Autowired
     private PostRepository postRepository;    
@@ -118,7 +121,7 @@ public class PostServiceImpl implements PostService{
                                     .profilePicture(model.getUser().getProfilePicture())
                                     .build();
 
-            images.forEach(img -> {
+            images.stream().filter(img -> img.getStatus() == 1).forEach(img -> {
                 ImagesDto imgDTO = ImagesDto.builder()
                                     .imageId(img.getImageId())
                                     .postId(postId)
@@ -528,39 +531,34 @@ public class PostServiceImpl implements PostService{
                 Posts updatedPost = postRepository.save(post);
 
                 List<ImagesDto> imagesDtos = postDto.getImages();
-                for (ImagesDto imagesDto : imagesDtos) {
-                    try{
-                        if(imagesDto.getUpdatedType() == ImagesDto.UpdatedType.ADD){
-                            // Add new image
-                            Images newImage = Images.builder()
-                                            .fileUrl(imagesDto.getFileUrl())
-                                            .fileName(imagesDto.getFileName())
-                                            .post(updatedPost)
-                                            .isPrimary(imagesDto.getIsPrimary())                
-                                            .build();
-                            imageRepository.save(newImage);
-                        }else if(imagesDto.getUpdatedType() == ImagesDto.UpdatedType.DELETE){
-                            // Delete image
-                            if(imagesDto.getImageId() != null){
-                                imageRepository.updateImageStatus(imagesDto.getImageId(), false);
-                            }
-                        }else if(imagesDto.getUpdatedType() == ImagesDto.UpdatedType.UPDATE){
-                            // Update existing image
-                            Optional <Images> imageOpt = imageRepository.findPrimaryImage(updatedPost.getPostId());
-                            if(imageOpt.isPresent()){
-                                Images imageToUpdate = imageOpt.get();                                
-                                imageToUpdate.setIsPrimary(false);
-                                imageRepository.save(imageToUpdate);
-
-                                Images imageNewPrimary = imageRepository.getReferenceById(imagesDto.getImageId());
-                                imageNewPrimary.setIsPrimary(true);
-                                imageRepository.save(imageNewPrimary);
-                            }
+                for (ImagesDto imagesDto : imagesDtos) {                    
+                    if(imagesDto.getUpdatedType() == ImagesDto.UpdatedType.ADD){
+                        // Add new image
+                        Images newImage = Images.builder()
+                                        .fileUrl(imagesDto.getFileUrl())
+                                        .fileName(imagesDto.getFileName())
+                                        .post(updatedPost)
+                                        .isPrimary(imagesDto.getIsPrimary())
+                                        .build();
+                        imageRepository.save(newImage);
+                    }else if(imagesDto.getUpdatedType() == ImagesDto.UpdatedType.DELETE){
+                        // Delete image
+                        if(imagesDto.getImageId() != null){
+                            imageRepository.updateImageStatus(imagesDto.getImageId(), 0);
                         }
-                    }catch(Exception e){
-                        // Log error and continue
-                        System.out.println("Error processing image update: " + e.getMessage());
-                    }                    
+                    }else if(imagesDto.getUpdatedType() == ImagesDto.UpdatedType.UPDATE){
+                        // Update existing image
+                        Optional <Images> imageOpt = imageRepository.findPrimaryImage(updatedPost.getPostId());
+                        if(imageOpt.isPresent()){
+                            Images imageToUpdate = imageOpt.get();                                
+                            imageToUpdate.setIsPrimary(false);
+                            imageRepository.save(imageToUpdate);
+
+                            Images imageNewPrimary = imageRepository.getReferenceById(imagesDto.getImageId());
+                            imageNewPrimary.setIsPrimary(true);
+                            imageRepository.save(imageNewPrimary);
+                        }
+                    }
                 }                
                 // Convert to PostDto to return
                 List<ImagesDto> imageJPA = updatedPost.getImages().stream().map(img -> ImagesDto.builder()
@@ -598,9 +596,11 @@ public class PostServiceImpl implements PostService{
                                         .build();
                 return updatedPostDto;
             }else{
+                log.error("Post not found with ID: " + postDto.getPostId());
                 throw new Exception("Post not found with ID: " + postDto.getPostId());
             }
         }else{
+            log.error("Post ID is null in editPost");
             throw new Exception("Post ID is required for editing.");
         }
     }

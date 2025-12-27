@@ -17,6 +17,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -56,10 +57,12 @@ public class Images implements Serializable{
     private LocalDateTime uploadDate;
 
     @Column(name = "status", columnDefinition = "int default 1")
-    private Integer status;
+    @Default
+    private Integer status = 1;
 
     @PrePersist
     protected void onCreate() {
         uploadDate = LocalDateTime.now();
-    }
+        status = 1;
+    }        
 }

@@ -12,7 +12,14 @@ public interface ImageRepository extends JpaRepository<Images, String>{
     @Query("SELECT i FROM Images i WHERE i.post.postId = :postId AND i.isPrimary = true AND i.status = 1")
     Optional<Images> findPrimaryImage(String postId);
 
+    @Query("SELECT i FROM Images i WHERE i.fileUrl = :fileUrl AND i.status = :status")
+    Optional<Images> findByFileUrlAndStatus(String fileUrl, Integer status);
+
     @Modifying
     @Query("UPDATE Images i SET i.status = :status WHERE i.imageId = :imageId")
     void updateImageStatus(String imageId, Integer status);
+
+    @Modifying
+    @Query("UPDATE Images i SET i.status = 0 WHERE i.fileUrl = :imageUrl")
+    void deleteImageByImageUrl(String imageUrl);
 }

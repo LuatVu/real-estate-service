@@ -1,6 +1,7 @@
 package com.realestate.services;
 
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
@@ -8,7 +9,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.realestate.config.CloudflareR2Properties;
 import com.realestate.exception.UnsupportedMediaTypeException;
+import com.realestate.repositories.ImageRepository;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -21,12 +24,14 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import java.io.IOException;
 import java.util.Optional;
-import java.util.UUID;
+import com.realestate.models.Images;
 
 @Service
 @RequiredArgsConstructor
 public class MediaService {
     private final S3Client s3Client;
+    @Autowired
+    private ImageRepository imageRepository;
 
     private final CloudflareR2Properties cloudflareR2Properties;
 
@@ -113,5 +118,21 @@ public class MediaService {
             case "svg" -> "image/svg+xml";
             default -> "application/octet-stream";
         };
+    }
+
+    @Transactional
+    public void deleteImage(String imageUrl) throws Exception {
+        try {
+           if(imageUrl == null || imageUrl.isEmpty()) {
+               throw new Exception("Image URL is null or empty");
+           }
+           Optional<Images> imageOpt = imageRepository.findByFileUrlAndStatus(imageUrl, 1);
+            if(imageOpt.isEmpty()) {
+                throw new Exception("Image not found with ID: " + imageUrl);
+            }
+           imageRepository.deleteImageByImageUrl(imageUrl);
+        } catch (S3Exception e) {
+            throw new Exception("Failed to delete image: " + imageUrl, e);
+        }
     }
 }

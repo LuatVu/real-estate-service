@@ -557,11 +557,17 @@ public class PostServiceImpl implements PostService{
                             Images imageNewPrimary = imageRepository.getReferenceById(imagesDto.getImageId());
                             imageNewPrimary.setIsPrimary(true);
                             imageRepository.save(imageNewPrimary);
+                        }else{
+                            Images imageNewPrimary = imageRepository.getReferenceById(imagesDto.getImageId());
+                            imageNewPrimary.setIsPrimary(true);
+                            imageRepository.save(imageNewPrimary);
                         }
                     }
                 }                
                 // Convert to PostDto to return
-                List<ImagesDto> imageJPA = updatedPost.getImages().stream().map(img -> ImagesDto.builder()
+                List<ImagesDto> imageJPA = updatedPost.getImages().stream()
+                                                        .filter(img -> img.getStatus() == 1)
+                                                        .map(img -> ImagesDto.builder()
                                                         .imageId(img.getImageId())
                                                         .postId(updatedPost.getPostId())
                                                         .fileUrl(img.getFileUrl())
